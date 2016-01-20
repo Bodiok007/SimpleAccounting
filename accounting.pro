@@ -19,4 +19,5 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     db.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow.ui

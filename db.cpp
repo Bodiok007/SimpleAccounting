@@ -51,7 +51,7 @@ QSqlQueryModel *DB::getAllSales()
                 "ON employees.employeeID "
                     "= sales.employeeID;"
                 );
-    qDebug() << m_modelSales->lastError();
+
     if (!setHeaderModelSales()) {
         qDebug() << "Can not create header model sales!";
     }
@@ -167,6 +167,8 @@ DB::~DB()
 {
     delete m_modelSales;
     delete m_modelServices;
+    delete m_db;
+    delete m_instance;
 }
 
 

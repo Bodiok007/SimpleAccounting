@@ -12,10 +12,10 @@ bool SalesTableView::initializeContextMenu()
     m_contextMenu = new QMenu(this);
 
     QAction *addSales = m_contextMenu->addAction("Додати");
-    addSales->setObjectName("addSales");
+    addSales->setObjectName("addSale");
 
     QAction *addService = m_contextMenu->addAction("Редагувати");
-    addService->setObjectName("editSales");
+    addService->setObjectName("editSale");
 
     connect(m_contextMenu,
             SIGNAL(triggered(QAction*)),
@@ -36,10 +36,10 @@ void SalesTableView::contextMenuEvent(QContextMenuEvent *pe)
 // do action from context menu
 void SalesTableView::slotActivatedContextMenu(QAction *pAction)
 {
-    if (pAction->objectName() == "addSales") {
+    if (pAction->objectName() == "addSale") {
         qDebug() << "Додати продажу";
     }
-    else if (pAction->objectName() == "editSales") {
+    else if (pAction->objectName() == "editSale") {
         qDebug() << "Редагувати поле";
     }
 

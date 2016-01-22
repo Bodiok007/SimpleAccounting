@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     db.cpp \
-    salestableview.cpp
+    salestableview.cpp \
+    servicestableview.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
-    salestableview.h
+    salestableview.h \
+    servicestableview.h
 
 FORMS    += \
     mainwindow.ui

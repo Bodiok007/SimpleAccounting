@@ -13,7 +13,7 @@ public:
                  QString userName = "root",
                  QString password = "",
                  QString hostName = "localhost");
-    QSqlQueryModel *getAllSales();
+    QSortFilterProxyModel *getAllSales();
     QSqlQueryModel *getAllServices();
     ~DB();
 
@@ -28,8 +28,10 @@ private:
     explicit DB(QObject *parent = 0);
     static DB *m_instance;
     QSqlDatabase *m_db;
-    QSqlQueryModel *m_modelSales;
-    QSqlQueryModel *m_modelServices;
+    QSortFilterProxyModel *m_pProxyModelSales;
+    QSortFilterProxyModel *m_pProxyModelServices;
+    QSqlQueryModel *m_pModelSales;
+    QSqlQueryModel *m_pModelServices;
 };
 
 #endif // DB_H

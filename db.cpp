@@ -4,8 +4,12 @@ DB::DB(QObject *parent) : QObject(parent)
 {
     m_db = &QSqlDatabase::addDatabase("QMYSQL");
     connectToDB();
-    m_modelSales = new QSqlQueryModel;
-    m_modelServices = new QSqlQueryModel;
+
+    m_pModelSales = new QSqlQueryModel;
+    m_pProxyModelSales = new QSortFilterProxyModel;
+
+    m_pModelServices = new QSqlQueryModel;
+    m_pProxyModelServices = new QSortFilterProxyModel;
 }
 
 
@@ -28,9 +32,9 @@ bool DB::connectToDB(QString databaseName,
 }
 
 
-QSqlQueryModel *DB::getAllSales()
+QSortFilterProxyModel *DB::getAllSales()
 {
-    m_modelSales->setQuery(
+    m_pModelSales->setQuery(
                 "SELECT products.productName, "
                     "productcategories.productCategoryName, "
                     "employees.employeeName, "
@@ -56,14 +60,16 @@ QSqlQueryModel *DB::getAllSales()
         qDebug() << "Can not create header model sales!";
     }
 
-    return m_modelSales;
+    m_pProxyModelSales->setSourceModel(m_pModelSales);
+
+    return m_pProxyModelSales;
 }
 
 
 // set header for each column model sales
 bool DB::setHeaderModelSales()
 {
-    if(!m_modelSales) {
+    if(!m_pModelSales) {
         return false;
     }
 
@@ -81,7 +87,7 @@ bool DB::setHeaderModelSales()
          currentHeaderColumn < numHeaderColumn;
          ++currentHeaderColumn) {
 
-       m_modelSales->setHeaderData(currentHeaderColumn
+       m_pModelSales->setHeaderData(currentHeaderColumn
                                    , Qt::Horizontal
                                    , lst.at(currentHeaderColumn));
     }
@@ -92,7 +98,7 @@ bool DB::setHeaderModelSales()
 
 QSqlQueryModel *DB::getAllServices()
 {
-    m_modelServices->setQuery(
+    m_pModelServices->setQuery(
                 "SELECT servicecategories.serviceCategoryName, "
                     "provideservices.orderDescription, "
                     "employees.employeeName, "
@@ -121,13 +127,13 @@ QSqlQueryModel *DB::getAllServices()
         qDebug() << "Can not create header model services!";
     }
 
-    return m_modelServices;
+    return m_pModelServices;
 }
 
 // set header for each column model services
 bool DB::setHeaderModelServices()
 {
-    if(!m_modelServices) {
+    if(!m_pModelServices) {
         return false;
     }
 
@@ -146,7 +152,7 @@ bool DB::setHeaderModelServices()
     for (int currentHeaderColumn = 0;
          currentHeaderColumn < numHeaderCeil;
          ++currentHeaderColumn) {
-       m_modelServices->setHeaderData(currentHeaderColumn
+       m_pModelServices->setHeaderData(currentHeaderColumn
                                    , Qt::Horizontal
                                    , lst.at(currentHeaderColumn));
     }
@@ -165,8 +171,8 @@ DB *DB::m_instance;
 
 DB::~DB()
 {
-    delete m_modelSales;
-    delete m_modelServices;
+    delete m_pModelSales;
+    delete m_pModelServices;
     delete m_db;
     delete m_instance;
 }

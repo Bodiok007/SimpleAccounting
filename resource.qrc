@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias = "logOut.png">images/logOut.png</file>
+    </qresource>
+</RCC>

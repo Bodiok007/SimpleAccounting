@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>937</width>
-    <height>719</height>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,55 +16,102 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="minimumSize">
-         <size>
-          <width>476</width>
-          <height>476</height>
-         </size>
-        </property>
-        <property name="currentIndex">
-         <number>1</number>
-        </property>
-        <widget class="QWidget" name="tabSales">
-         <attribute name="title">
-          <string>Продажі</string>
-         </attribute>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="minimumSize">
+       <size>
+        <width>476</width>
+        <height>476</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="tabSales">
+       <attribute name="title">
+        <string>Продажі</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="SalesTableView" name="tableSales">
+           <widget class="QPushButton" name="addSaleButton">
             <property name="minimumSize">
              <size>
-              <width>448</width>
-              <height>225</height>
+              <width>100</width>
+              <height>40</height>
              </size>
+            </property>
+            <property name="text">
+             <string>Додати товар</string>
             </property>
            </widget>
           </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tabServices">
-         <attribute name="title">
-          <string>Послуги</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="ServicesTableView" name="tableServices">
-            <property name="minimumSize">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
              <size>
-              <width>300</width>
-              <height>300</height>
+              <width>78</width>
+              <height>38</height>
              </size>
             </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+        </item>
+        <item>
+         <widget class="SalesTableView" name="tableSales">
+          <property name="minimumSize">
+           <size>
+            <width>448</width>
+            <height>225</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabServices">
+       <attribute name="title">
+        <string>Послуги</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="ServicesTableView" name="tableServices">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -79,7 +126,7 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Меню</string>
+     <string>Продажі</string>
     </property>
     <addaction name="addSale"/>
     <addaction name="editSale"/>
@@ -94,7 +141,17 @@
    <addaction name="menu"/>
    <addaction name="menu_2"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+  </widget>
   <action name="addSale">
    <property name="text">
     <string>Додати продаж</string>

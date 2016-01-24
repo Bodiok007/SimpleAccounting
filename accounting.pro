@@ -16,12 +16,20 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     db.cpp \
     salestableview.cpp \
-    servicestableview.cpp
+    servicestableview.cpp \
+    addsaleform.cpp \
+    addsale.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
     salestableview.h \
-    servicestableview.h
+    servicestableview.h \
+    addsaleform.h \
+    addsale.h
 
 FORMS    += \
-    mainwindow.ui
+    mainwindow.ui \
+    addsaleform.ui
+
+RESOURCES += \
+    resource.qrc

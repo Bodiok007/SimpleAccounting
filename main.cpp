@@ -2,6 +2,8 @@
 #include "addsaleform.h"
 #include <QApplication>
 
+#include "loginform.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -14,6 +16,12 @@ int main(int argc, char *argv[])
             SLOT(show())
            );*/
     w.show();
+
+    //LoginForm lf;
+    //lf.show();
+
+    QStyle* pstyle = QStyleFactory::create("Fusion");
+    QApplication::setStyle(pstyle);
 
     return a.exec();
 }

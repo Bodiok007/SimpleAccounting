@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "addsale.h"
+#include "loginform.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,11 +21,14 @@ public:
 
 public slots:
     void showAddSaleForm();
+    void logOut();
 
 
 private:
     Ui::MainWindow *ui;
+    LoginForm *m_pLoginForm;
     AddSale *m_pAddSaleForm;
+
 };
 
 #endif // MAINWINDOW_H

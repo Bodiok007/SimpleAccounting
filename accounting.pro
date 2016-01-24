@@ -18,18 +18,23 @@ SOURCES += main.cpp\
     salestableview.cpp \
     servicestableview.cpp \
     addsaleform.cpp \
-    addsale.cpp
+    addsale.cpp \
+    login.cpp \
+    loginform.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
     salestableview.h \
     servicestableview.h \
     addsaleform.h \
-    addsale.h
+    addsale.h \
+    login.h \
+    loginform.h
 
 FORMS    += \
     mainwindow.ui \
-    addsaleform.ui
+    addsaleform.ui \
+    loginform.ui
 
 RESOURCES += \
     resource.qrc

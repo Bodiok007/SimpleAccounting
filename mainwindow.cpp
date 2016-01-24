@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "db.h"
 #include "ui_addsaleform.h"
+//#include "ui_loginform.h"
+
 //#include "salestableview.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(showAddSaleForm())
            );
 
+    m_pLoginForm = new LoginForm(0);
+    m_pLoginForm->show();
+
     ui->tableSales->setModel(DB::instance()->getAllSales());
     ui->tableSales->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -25,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
 
-    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(slotNoImpl()));
+    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()));
 
 
     //connect(ui->addSaleButton, SIGNAL(clicked(bool), ),
@@ -34,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_pAddSaleForm;
+    delete m_pLoginForm;
 }
 
 Ui::MainWindow *MainWindow::getForm()
@@ -44,4 +51,9 @@ Ui::MainWindow *MainWindow::getForm()
 void MainWindow::showAddSaleForm()
 {
     m_pAddSaleForm->show();
+}
+
+void MainWindow::logOut()
+{
+    this->hide();
 }

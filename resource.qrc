@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file alias = "logOut.png">images/logOut.png</file>
-        <file alias = "login.png">images/login.png</file>
-        <file alias = "loginSetting.png">images/loginSetting.png</file>
+        <file alias="logOut.png">images/logOut.png</file>
+        <file alias="login.png">images/login.png</file>
+        <file alias="loginSetting.png">images/loginSetting.png</file>
     </qresource>
 </RCC>

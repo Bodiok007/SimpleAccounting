@@ -3,16 +3,20 @@
 
 #include <QObject>
 #include <QtSql>
+#include "dbsettings.h"
+
+/*
+ * Bug in QT 5.5.0
+ * QSqlDatabase::open() always return true
+ *
+ */
 
 class DB : public QObject
 {
     Q_OBJECT
 public:
     static DB *instance();
-    bool connectToDB(QString databaseName = "accounting",
-                 QString userName = "root",
-                 QString password = "",
-                 QString hostName = "localhost");
+
     QSortFilterProxyModel *getAllSales();
     QSqlQueryModel *getAllServices();
     ~DB();
@@ -20,14 +24,21 @@ public:
 signals:
 
 public slots:
+    bool connectToDB(QString databaseName,
+                 QString userName,
+                 QString password,
+                 QString hostName);
+    bool connectToDB();
 
 private:
     bool setHeaderModelSales();
     bool setHeaderModelServices();
 
+    DBSettings *m_pSettings;
+
     explicit DB(QObject *parent = 0);
     static DB *m_instance;
-    QSqlDatabase *m_db;
+    QSqlDatabase m_db;
     QSortFilterProxyModel *m_pProxyModelSales;
     QSortFilterProxyModel *m_pProxyModelServices;
     QSqlQueryModel *m_pModelSales;

@@ -1,0 +1,4 @@
+databaseName:accounting
+username:root
+password:
+hostName:localhost

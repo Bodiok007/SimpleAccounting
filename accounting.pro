@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = accounting
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     db.cpp \
@@ -20,7 +19,8 @@ SOURCES += main.cpp\
     addsaleform.cpp \
     addsale.cpp \
     login.cpp \
-    loginform.cpp
+    loginform.cpp \
+    dbsettings.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
@@ -29,7 +29,8 @@ HEADERS  += mainwindow.h \
     addsaleform.h \
     addsale.h \
     login.h \
-    loginform.h
+    loginform.h \
+    dbsettings.h
 
 FORMS    += \
     mainwindow.ui \

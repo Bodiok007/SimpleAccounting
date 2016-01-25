@@ -2,9 +2,8 @@
 #include "ui_mainwindow.h"
 #include "db.h"
 #include "ui_addsaleform.h"
-//#include "ui_loginform.h"
 
-//#include "salestableview.h"
+#include "dbsettings.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,9 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
 
     ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()));
-
-
-    //connect(ui->addSaleButton, SIGNAL(clicked(bool), ),
 }
 
 MainWindow::~MainWindow()

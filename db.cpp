@@ -2,7 +2,9 @@
 
 DB::DB(QObject *parent) : QObject(parent)
 {
-    m_db = &QSqlDatabase::addDatabase("QMYSQL");
+    m_db = QSqlDatabase::addDatabase("QMYSQL");
+    m_pSettings = new DBSettings;
+
     connectToDB();
 
     m_pModelSales = new QSqlQueryModel;
@@ -14,17 +16,34 @@ DB::DB(QObject *parent) : QObject(parent)
 
 
 bool DB::connectToDB(QString databaseName,
-                 QString userName ,
-                 QString password ,
-                 QString hostName )
+                 QString userName,
+                 QString password,
+                 QString hostName)
 {
-    m_db->setDatabaseName(databaseName);
-    m_db->setUserName(userName);
-    m_db->setHostName(hostName);
-    m_db->setPassword(password);
+    m_db.setDatabaseName(databaseName);
+    m_db.setUserName(userName);
+    m_db.setHostName(hostName);
+    m_db.setPassword(password);
 
-    if (!m_db->open()) {
-        qDebug() << "Cannot open database [DB class]:" << m_db->lastError() << databaseName;
+    if (!m_db.open()) {
+        qDebug() << "Cannot open database [DB class]:" << m_db.lastError()
+                 << m_pSettings->getDatabaseName();
+        return false;
+    }
+
+    return true;
+}
+
+bool DB::connectToDB()
+{
+    m_db.setDatabaseName(m_pSettings->getDatabaseName());
+    m_db.setUserName(m_pSettings->getUserName());
+    m_db.setHostName(m_pSettings->getHostName());
+    m_db.setPassword(m_pSettings->getPassword());
+
+    if (!m_db.open()) {
+        qDebug() << "Cannot open database [DB class]:" << m_db.lastError()
+                 << m_pSettings->getDatabaseName();
         return false;
     }
 
@@ -57,7 +76,7 @@ QSortFilterProxyModel *DB::getAllSales()
                 );
 
     if (!setHeaderModelSales()) {
-        qDebug() << "Can not create header model sales!";
+        qDebug() << "Can`t create header model sales!";
     }
 
     m_pProxyModelSales->setSourceModel(m_pModelSales);
@@ -124,7 +143,7 @@ QSqlQueryModel *DB::getAllServices()
                 );
 
     if (!setHeaderModelServices()) {
-        qDebug() << "Can not create header model services!";
+        qDebug() << "Can`t create header model services!";
     }
 
     return m_pModelServices;
@@ -152,9 +171,9 @@ bool DB::setHeaderModelServices()
     for (int currentHeaderColumn = 0;
          currentHeaderColumn < numHeaderCeil;
          ++currentHeaderColumn) {
-       m_pModelServices->setHeaderData(currentHeaderColumn
-                                   , Qt::Horizontal
-                                   , lst.at(currentHeaderColumn));
+       m_pModelServices->setHeaderData(currentHeaderColumn,
+                                       Qt::Horizontal,
+                                       lst.at(currentHeaderColumn));
     }
 
     return true;
@@ -173,7 +192,7 @@ DB::~DB()
 {
     delete m_pModelSales;
     delete m_pModelServices;
-    delete m_db;
+    delete m_pSettings;
     delete m_instance;
 }
 

@@ -34,6 +34,7 @@ bool DB::connectToDB(QString databaseName,
     return true;
 }
 
+
 bool DB::connectToDB()
 {
     m_db.setDatabaseName(m_pSettings->getDatabaseName());
@@ -48,6 +49,35 @@ bool DB::connectToDB()
     }
 
     return true;
+}
+
+
+DBSettings *DB::getSettings()
+{
+    return m_pSettings;
+}
+
+
+QString DB::logIn(QString login, QString password)
+{
+    QSqlQuery query;
+    query.prepare(
+                "SELECT employeeName FROM employees "
+                "WHERE employeeLogin = ? "
+                "AND employeePassword = ?"
+                );
+    query.addBindValue(login);
+    query.addBindValue(password);
+    query.exec();
+
+    if (query.size() <= 0) {
+        return NULL;
+    }
+
+    query.next();
+    QString userName = query.value(0).toString();
+
+    return userName;
 }
 
 

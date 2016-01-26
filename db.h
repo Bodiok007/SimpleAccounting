@@ -30,6 +30,10 @@ public slots:
                  QString hostName);
     bool connectToDB();
 
+    DBSettings *getSettings();
+
+    QString logIn(QString login, QString password);
+
 private:
     bool setHeaderModelSales();
     bool setHeaderModelServices();

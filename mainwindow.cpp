@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pLoginForm = new LoginForm(0);
     m_pLoginForm->show();
 
+    //this->hide();
+
     ui->tableSales->setModel(DB::instance()->getAllSales());
     ui->tableSales->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -29,7 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
 
-    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()));
+    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()) );
+
+    connect(m_pLoginForm, SIGNAL(logged(QString)), SLOT(logIn(QString)) );
 }
 
 MainWindow::~MainWindow()
@@ -44,6 +48,12 @@ Ui::MainWindow *MainWindow::getForm()
     return ui;
 }
 
+void MainWindow::exit()
+{
+    this->hide();
+    m_pLoginForm->show();
+}
+
 void MainWindow::showAddSaleForm()
 {
     m_pAddSaleForm->show();
@@ -52,4 +62,11 @@ void MainWindow::showAddSaleForm()
 void MainWindow::logOut()
 {
     this->hide();
+    m_pLoginForm->show();
+}
+
+void MainWindow::logIn(QString userName)
+{
+    this->show();
+    qDebug() << "userLogged!" + userName;
 }

@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     servicestableview.cpp \
     addsaleform.cpp \
     addsale.cpp \
-    login.cpp \
     loginform.cpp \
     dbsettings.cpp
 
@@ -28,7 +27,6 @@ HEADERS  += mainwindow.h \
     servicestableview.h \
     addsaleform.h \
     addsale.h \
-    login.h \
     loginform.h \
     dbsettings.h
 

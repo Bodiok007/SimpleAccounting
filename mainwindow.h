@@ -19,9 +19,12 @@ public:
 
     Ui::MainWindow *getForm();
 
+    virtual void exit();
+
 public slots:
     void showAddSaleForm();
     void logOut();
+    void logIn(QString userName);
 
 
 private:

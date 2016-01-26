@@ -70,6 +70,11 @@ void DBSettings::writeSettings(QString databaseName,
     out << "hostName:" << hostName;
 
     m_pSettingsFile->close();
+
+    setDatabaseName(databaseName);
+    setUserName(userName);
+    setPassword(password);
+    setHostName(hostName);
 }
 
 

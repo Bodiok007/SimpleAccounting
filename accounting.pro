@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     addsaleform.cpp \
     addsale.cpp \
     loginform.cpp \
-    dbsettings.cpp
+    dbsettings.cpp \
+    addserviceform.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
@@ -28,12 +29,14 @@ HEADERS  += mainwindow.h \
     addsaleform.h \
     addsale.h \
     loginform.h \
-    dbsettings.h
+    dbsettings.h \
+    addserviceform.h
 
 FORMS    += \
     mainwindow.ui \
     addsaleform.ui \
-    loginform.ui
+    loginform.ui \
+    addserviceform.ui
 
 RESOURCES += \
     resource.qrc

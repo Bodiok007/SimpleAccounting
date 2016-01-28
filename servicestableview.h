@@ -10,6 +10,7 @@ public:
     ServicesTableView(QWidget *parent);
 
 signals:
+    void addService();
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);

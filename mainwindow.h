@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "addsale.h"
+#include "addserviceform.h"
 #include "loginform.h"
 
 namespace Ui {
@@ -23,6 +24,7 @@ public:
 
 public slots:
     void showAddSaleForm();
+    void showAddServiceForm();
     void logOut();
     void logIn(QString userName);
     void setModels();
@@ -33,6 +35,7 @@ private:
     Ui::MainWindow *ui;
     LoginForm *m_pLoginForm;
     AddSale *m_pAddSaleForm;
+    AddServiceForm *m_pAddServiceForm;
 
 };
 

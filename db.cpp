@@ -16,7 +16,7 @@ DB::DB(QObject *parent) : QObject(parent)
     m_pQuery = new QSqlQuery;
 
     getSaleCategoriesFromDB();
-    qDebug() << getCurrentDate();
+    getServiceCategoriesFromDB();
 }
 
 
@@ -104,6 +104,19 @@ QStringList DB::getListSaleCategories()
     return categories;
 }
 
+QStringList DB::getListServiceCategories()
+{
+    QStringList categories;
+
+    QMapIterator<QString, unsigned int> i(m_serviceCategories);
+    while (i.hasNext()) {
+        i.next();
+        categories << i.key();
+    }
+
+    return categories;
+}
+
 void DB::addSale(QString productName,
                  QString categoryName,
                  QString employeeName,
@@ -126,7 +139,12 @@ void DB::addSale(QString productName,
 
     m_pQuery->prepare(
                 "INSERT INTO sales "
-                "(employeeID, productCategoryID, productID, productCount, saleDate, saleSum) "
+                    "(employeeID, "
+                    "productCategoryID, "
+                    "productID, "
+                    "productCount, "
+                    "saleDate, "
+                    "saleSum) "
                 "VALUES (?, ?, ?, ?, ?, ?) "
                 );
     m_pQuery->addBindValue(employeeID);
@@ -145,8 +163,57 @@ void DB::addSale(QString productName,
         qDebug() << m_pQuery->lastQuery();
     }
 
-    emit updateData();
+    emit updateSalesData();
 
+}
+
+void DB::addService(QString customerName,
+                    QString customerPhone,
+                    QString employeeName,
+                    QString categoryName,
+                    QString orderDescription,
+                    double serviceSum)
+{
+    unsigned int customerID = addCustomer(customerName, customerPhone);
+    if (customerID == NULL) {
+        qDebug() << m_pQuery->lastQuery();
+        return;
+    }
+
+    unsigned int employeeID = getCurrentEmployeeID(employeeName);
+    if (employeeID == NULL) {
+        qDebug() << m_pQuery->lastQuery();
+        return;
+    }
+
+    m_pQuery->prepare(
+                "INSERT INTO provideservices "
+                    "(serviceCategoryID, "
+                    "employeeID, "
+                    "customerID, "
+                    "orderDescription, "
+                    "orderServiceDate, "
+                    "executionServiceDate, "
+                    "serviceSum) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?) "
+                );
+    m_pQuery->addBindValue(m_serviceCategories[categoryName]);
+    m_pQuery->addBindValue(employeeID);
+    m_pQuery->addBindValue(customerID);
+    m_pQuery->addBindValue(orderDescription);
+    m_pQuery->addBindValue(getCurrentDate());
+    m_pQuery->addBindValue("");
+    m_pQuery->addBindValue(serviceSum);
+
+    if (!m_pQuery->exec()) {
+        /*qDebug() << productCount << " "
+                 << productCost << " "
+                 << m_saleCategories[productName];*/
+        qDebug() << m_pQuery->lastError();
+        qDebug() << m_pQuery->lastQuery();
+    }
+
+    emit updateServicesData();
 }
 
 
@@ -159,6 +226,25 @@ unsigned int DB::addProduct(QString productName,
                 );
     m_pQuery->addBindValue(productName);
     m_pQuery->addBindValue(productCost);
+
+    if (m_pQuery->exec()) {
+        return m_pQuery->lastInsertId().toUInt();
+    }
+
+    qDebug() << m_pQuery->lastQuery();
+
+    return NULL;
+}
+
+unsigned int DB::addCustomer(QString customerName,
+                             QString customerPhone)
+{
+    m_pQuery->prepare(
+                "INSERT INTO customers (customerName, customerPhone) "
+                "VALUES (?, ?) "
+                );
+    m_pQuery->addBindValue(customerName);
+    m_pQuery->addBindValue(customerPhone);
 
     if (m_pQuery->exec()) {
         return m_pQuery->lastInsertId().toUInt();
@@ -199,7 +285,7 @@ bool DB::getSaleCategoriesFromDB()
 {
     m_pQuery->exec(
                 "SELECT productcategories.productCategoryName, "
-                "productcategories.productCategoryID "
+                    "productcategories.productCategoryID "
                 "FROM productcategories"
                 );
 
@@ -215,6 +301,28 @@ bool DB::getSaleCategoriesFromDB()
     }
 
     return &m_saleCategories;
+}
+
+bool DB::getServiceCategoriesFromDB()
+{
+    m_pQuery->exec(
+                "SELECT servicecategories.serviceCategoryName, "
+                    "servicecategories.serviceCategoryID "
+                "FROM servicecategories"
+                );
+
+    if (m_pQuery->size() <= 0) {
+        qDebug() << m_pQuery->lastQuery();
+        return NULL;
+    }
+
+    while (m_pQuery->next()) {
+        QString categoryName = m_pQuery->value(0).toString();
+        unsigned int categoryID = m_pQuery->value(1).toUInt();
+        m_serviceCategories[categoryName] = categoryID;
+    }
+
+    return &m_serviceCategories;
 }
 
 

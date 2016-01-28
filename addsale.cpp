@@ -71,9 +71,9 @@ void AddSale::addSale()
                             m_pCountProduct->text().toDouble(),
                             m_pPriceProduct->text().toDouble());
 
-    m_pCountProduct->setText("");
-    m_pNameProduct->setText("");
-    m_pPriceProduct->setText("");
+    m_pCountProduct->clear();
+    m_pNameProduct->clear();
+    m_pPriceProduct->clear();
 
     hide();
 }

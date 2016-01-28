@@ -18,7 +18,6 @@ public:
     void setEmployeeName(QString emloyeeName);
 
 public slots:
-    //void addSale();
 
 private:
     Ui::AddSaleForm *ui;

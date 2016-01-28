@@ -12,10 +12,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     m_pAddSaleForm = new AddSale(0);
-
     connect(ui->addSaleButton,
             SIGNAL(clicked(bool)),
             SLOT(showAddSaleForm())
+           );
+
+    m_pAddServiceForm = new AddServiceForm;
+    connect(ui->addServiceButton,
+            SIGNAL(clicked(bool)),
+            SLOT(showAddServiceForm())
            );
 
     m_pLoginForm = new LoginForm(0);
@@ -26,13 +31,23 @@ MainWindow::MainWindow(QWidget *parent) :
     setModels();
 
     connect(DB::instance(),
-            SIGNAL(updateData()),
+            SIGNAL(updateSalesData()),
             SLOT(updateSalesModel())
+           );
+
+    connect(DB::instance(),
+            SIGNAL(updateServicesData()),
+            SLOT(updateServicesModel())
            );
 
     connect(ui->tableSales,
             SIGNAL(addSale()),
             SLOT(showAddSaleForm())
+           );
+
+    connect(ui->tableServices,
+            SIGNAL(addService()),
+            SLOT(showAddServiceForm())
            );
 
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
@@ -80,6 +95,12 @@ void MainWindow::showAddSaleForm()
 {
     m_pAddSaleForm->setEmployeeName(windowTitle());
     m_pAddSaleForm->show();
+}
+
+void MainWindow::showAddServiceForm()
+{
+    m_pAddServiceForm->setEmployeeName(windowTitle());
+    m_pAddServiceForm->show();
 }
 
 

@@ -12,6 +12,11 @@ DB::DB(QObject *parent) : QObject(parent)
 
     m_pModelServices = new QSqlQueryModel;
     m_pProxyModelServices = new QSortFilterProxyModel;
+
+    m_pQuery = new QSqlQuery;
+
+    getSaleCategoriesFromDB();
+    qDebug() << getCurrentDate();
 }
 
 
@@ -60,24 +65,156 @@ DBSettings *DB::getSettings()
 
 QString DB::logIn(QString login, QString password)
 {
-    QSqlQuery query;
-    query.prepare(
+    m_pQuery->prepare(
                 "SELECT employeeName FROM employees "
                 "WHERE employeeLogin = ? "
                 "AND employeePassword = ?"
                 );
-    query.addBindValue(login);
-    query.addBindValue(password);
-    query.exec();
+    m_pQuery->addBindValue(login);
+    m_pQuery->addBindValue(password);
+    m_pQuery->exec();
 
-    if (query.size() <= 0) {
+    if (m_pQuery->size() <= 0) {
         return NULL;
     }
 
-    query.next();
-    QString userName = query.value(0).toString();
+    m_pQuery->next();
+    QString userName = m_pQuery->value(0).toString();
 
     return userName;
+}
+
+
+QMap<QString, unsigned int> *DB::getSaleCategories()
+{
+    return &m_saleCategories;
+}
+
+
+QStringList DB::getListSaleCategories()
+{
+    QStringList categories;
+
+    QMapIterator<QString, unsigned int> i(m_saleCategories);
+    while (i.hasNext()) {
+        i.next();
+        categories << i.key();
+    }
+
+    return categories;
+}
+
+void DB::addSale(QString productName,
+                 QString categoryName,
+                 QString employeeName,
+                 double productCount,
+                 double productCost)
+{
+    unsigned int productID = addProduct(productName, productCost);
+    if (productID == NULL) {
+        qDebug() << m_pQuery->lastQuery();
+        return;
+    }
+
+    double saleSum = productCount * productCost;
+
+    unsigned int employeeID = getCurrentEmployeeID(employeeName);
+    if (employeeID == NULL) {
+        qDebug() << m_pQuery->lastQuery();
+        return;
+    }
+
+    m_pQuery->prepare(
+                "INSERT INTO sales "
+                "(employeeID, productCategoryID, productID, productCount, saleDate, saleSum) "
+                "VALUES (?, ?, ?, ?, ?, ?) "
+                );
+    m_pQuery->addBindValue(employeeID);
+    m_pQuery->addBindValue(m_saleCategories[categoryName]);
+    m_pQuery->addBindValue(productID);
+    m_pQuery->addBindValue(productCount);
+    m_pQuery->addBindValue(getCurrentDate());
+    m_pQuery->addBindValue(saleSum);
+
+
+    if (!m_pQuery->exec()) {
+        qDebug() << productCount << " "
+                 << productCost << " "
+                 << m_saleCategories[productName];
+        qDebug() << m_pQuery->lastError();
+        qDebug() << m_pQuery->lastQuery();
+    }
+
+    emit updateData();
+
+}
+
+
+unsigned int DB::addProduct(QString productName,
+                            double productCost)
+{
+    m_pQuery->prepare(
+                "INSERT INTO products (productName, productCost) "
+                "VALUES (?, ?) "
+                );
+    m_pQuery->addBindValue(productName);
+    m_pQuery->addBindValue(productCost);
+
+    if (m_pQuery->exec()) {
+        return m_pQuery->lastInsertId().toUInt();
+    }
+
+    qDebug() << m_pQuery->lastQuery();
+
+    return NULL;
+}
+
+QString DB::getCurrentDate()
+{
+    QDate dateToday = QDate::currentDate();
+    return dateToday.toString("dd.MM.yyyy");
+}
+
+unsigned int DB::getCurrentEmployeeID(QString employeeName)
+{
+    m_pQuery->prepare(
+                "SELECT employeeID FROM employees "
+                "WHERE employeeName = ? "
+                );
+    m_pQuery->addBindValue(employeeName);
+    m_pQuery->exec();
+
+    if (m_pQuery->size() <= 0) {
+        return NULL;
+    }
+
+    m_pQuery->next();
+    unsigned int employeeID = m_pQuery->value(0).toUInt();
+
+    return employeeID;
+}
+
+
+bool DB::getSaleCategoriesFromDB()
+{
+    m_pQuery->exec(
+                "SELECT productcategories.productCategoryName, "
+                "productcategories.productCategoryID "
+                "FROM productcategories"
+                );
+
+    if (m_pQuery->size() <= 0) {
+        qDebug() << m_pQuery->lastQuery();
+        return NULL;
+    }
+
+    while (m_pQuery->next()) {
+        QString categoryName = m_pQuery->value(0).toString();
+        unsigned int categoryID = m_pQuery->value(1).toUInt();
+        m_saleCategories[categoryName] = categoryID;
+    }
+
+    return &m_saleCategories;
 }
 
 
@@ -88,7 +225,8 @@ QSortFilterProxyModel *DB::getAllSales()
                     "productcategories.productCategoryName, "
                     "employees.employeeName, "
                     "sales.productCount, "
-                    "sales.saleData, "
+                    "sales.saleDate, "
+                    "products.productCost, "
                     "sales.saleSum "
                 "FROM sales "
 
@@ -128,7 +266,8 @@ bool DB::setHeaderModelSales()
         << "Продавець"
         << "Кількість"
         << "Дата продажі"
-        << "Вартість, грн";
+        << "Вартість одиниці, грн"
+        << "Загальна сума, грн";
 
     int numHeaderColumn = lst.size();
 
@@ -153,8 +292,8 @@ QSqlQueryModel *DB::getAllServices()
                     "employees.employeeName, "
                     "customers.customerName, "
                     "customers.customerPhone, "
-                    "provideservices.orderServiceData, "
-                    "provideservices.executionServiceData, "
+                    "provideservices.orderServiceDate, "
+                    "provideservices.executionServiceDate, "
                     "provideservices.serviceSum "
                 "FROM provideservices "
 

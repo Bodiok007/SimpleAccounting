@@ -4,6 +4,7 @@ SalesTableView::SalesTableView(QWidget *parent)
     : QTableView(parent)
 {
     initializeContextMenu();
+
 }
 
 
@@ -38,6 +39,7 @@ void SalesTableView::slotActivatedContextMenu(QAction *pAction)
 {
     if (pAction->objectName() == "addSale") {
         qDebug() << "Додати продажу";
+        emit addSale();
     }
     else if (pAction->objectName() == "editSale") {
         qDebug() << "Редагувати поле";

@@ -23,11 +23,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //this->hide();
 
-    ui->tableSales->setModel(DB::instance()->getAllSales());
-    ui->tableSales->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    setModels();
 
-    ui->tableServices->setModel(DB::instance()->getAllServices());
-    ui->tableServices->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(DB::instance(),
+            SIGNAL(updateData()),
+            SLOT(updateSalesModel())
+           );
+
+    connect(ui->tableSales,
+            SIGNAL(addSale()),
+            SLOT(showAddSaleForm())
+           );
 
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
 
@@ -36,17 +42,32 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_pLoginForm, SIGNAL(logged(QString)), SLOT(logIn(QString)) );
 }
 
-MainWindow::~MainWindow()
+
+void MainWindow::setModels()
 {
-    delete ui;
-    delete m_pAddSaleForm;
-    delete m_pLoginForm;
+    updateSalesModel();
+    updateServicesModel();
+    ui->tableSales->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableServices->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
+
+
+void MainWindow::updateSalesModel()
+{
+    ui->tableSales->setModel(DB::instance()->getAllSales());
+}
+
+void MainWindow::updateServicesModel()
+{
+    ui->tableServices->setModel(DB::instance()->getAllServices());
+}
+
 
 Ui::MainWindow *MainWindow::getForm()
 {
     return ui;
 }
+
 
 void MainWindow::exit()
 {
@@ -54,10 +75,13 @@ void MainWindow::exit()
     m_pLoginForm->show();
 }
 
+
 void MainWindow::showAddSaleForm()
 {
+    m_pAddSaleForm->setEmployeeName(windowTitle());
     m_pAddSaleForm->show();
 }
+
 
 void MainWindow::logOut()
 {
@@ -65,8 +89,20 @@ void MainWindow::logOut()
     m_pLoginForm->show();
 }
 
+
 void MainWindow::logIn(QString userName)
 {
+    this->setWindowTitle(userName);
     this->show();
     qDebug() << "userLogged!" + userName;
 }
+
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+    delete m_pAddSaleForm;
+    delete m_pLoginForm;
+}
+
+

@@ -5,24 +5,28 @@
 
 class AddSale : public QGroupBox
 {
+    Q_OBJECT
 public:
     AddSale(QWidget *parent);
 
 signals:
 
 public slots:
+    void addSale();
+    void setEmployeeName(QString employeeName);
 
 private:
     QLineEdit *m_pNameProduct;
-    QLineEdit *m_pCategoryProduct;
+    QComboBox *m_pCategoryProduct;
     QLineEdit *m_pCountProduct;
     QLineEdit *m_pPriceProduct;
     QPushButton *m_pAddSale;
     QGridLayout *m_pGridLayout;
 
-    void initializeComponents();
+    QString m_employeeName;
+
     void createLabels();
-    void createEditLines();
+    void createFields();
     void createAddButton();
 };
 

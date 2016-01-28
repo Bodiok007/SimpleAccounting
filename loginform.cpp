@@ -26,6 +26,8 @@ LoginForm::LoginForm(QWidget *parent) :
            );
 
     setSettingsDB();
+
+    ui->toolBox->setCurrentIndex(0);
 }
 
 

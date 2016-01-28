@@ -25,7 +25,9 @@ public slots:
     void showAddSaleForm();
     void logOut();
     void logIn(QString userName);
-
+    void setModels();
+    void updateSalesModel();
+    void updateServicesModel();
 
 private:
     Ui::MainWindow *ui;

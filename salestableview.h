@@ -13,6 +13,7 @@ public:
 
 
 signals:
+    void addSale();
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);

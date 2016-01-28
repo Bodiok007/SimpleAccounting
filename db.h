@@ -19,15 +19,24 @@ public:
 
     QSortFilterProxyModel *getAllSales();
     QSqlQueryModel *getAllServices();
+    QMap<QString, unsigned int> *getSaleCategories();
+    QStringList getListSaleCategories();
+
+    void addSale(QString productName,
+                 QString categoryName, QString employeeName,
+                 double productCount,
+                 double productCost);
+
     ~DB();
 
 signals:
+    void updateData();
 
 public slots:
     bool connectToDB(QString databaseName,
-                 QString userName,
-                 QString password,
-                 QString hostName);
+                     QString userName,
+                     QString password,
+                     QString hostName);
     bool connectToDB();
 
     DBSettings *getSettings();
@@ -38,7 +47,15 @@ private:
     bool setHeaderModelSales();
     bool setHeaderModelServices();
 
+    bool getSaleCategoriesFromDB();
+
+    unsigned int addProduct(QString productName,
+                   double productCost);
+    QString getCurrentDate();
+    unsigned int getCurrentEmployeeID(QString employeeName);
+
     DBSettings *m_pSettings;
+    QSqlQuery *m_pQuery;
 
     explicit DB(QObject *parent = 0);
     static DB *m_instance;
@@ -47,6 +64,8 @@ private:
     QSortFilterProxyModel *m_pProxyModelServices;
     QSqlQueryModel *m_pModelSales;
     QSqlQueryModel *m_pModelServices;
+
+    QMap<QString, unsigned int> m_saleCategories;
 };
 
 #endif // DB_H

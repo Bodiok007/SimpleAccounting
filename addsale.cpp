@@ -1,4 +1,5 @@
 #include "addsale.h"
+#include "db.h"
 
 AddSale::AddSale(QWidget *parent)
     : QGroupBox(parent)
@@ -7,26 +8,27 @@ AddSale::AddSale(QWidget *parent)
 
     createLabels();
 
-    createEditLines();
+    createFields();
 
     createAddButton();
 
     setLayout(m_pGridLayout);
 
     setAttribute(Qt::WA_ShowModal);
+
+    connect(m_pAddSale,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(addSale())
+           );
 }
 
-void AddSale::initializeComponents()
-{
-
-}
 
 void AddSale::createLabels()
 {
     QLabel *lb1 = new QLabel("Назва товару");
     QLabel *lb2 = new QLabel("Категорія");
     QLabel *lb3 = new QLabel("Кількість");
-    //QLabel *lb3 = new QLabel("Дата продажі");
     QLabel *lb4 = new QLabel("Вартість одиниці");
 
     m_pGridLayout->addWidget(lb1, 0, 0);
@@ -36,11 +38,11 @@ void AddSale::createLabels()
 
 }
 
-void AddSale::createEditLines()
+void AddSale::createFields()
 {
     m_pNameProduct = new QLineEdit;
-    //m_pNameProduct->resize(25, 25);
-    m_pCategoryProduct = new QLineEdit;
+    m_pCategoryProduct = new QComboBox;
+    m_pCategoryProduct->addItems(DB::instance()->getListSaleCategories());
     m_pCountProduct = new QLineEdit;
     m_pPriceProduct = new QLineEdit;
 
@@ -57,6 +59,27 @@ void AddSale::createAddButton()
     m_pAddSale->setText("Додати");
 
     m_pGridLayout->addWidget(m_pAddSale, 2, 3);
+}
 
+void AddSale::addSale()
+{
+
+    qDebug() << "AddSale " << m_pCategoryProduct->currentText() << " " << m_employeeName;
+    DB::instance()->addSale(m_pNameProduct->text(),
+                            m_pCategoryProduct->currentText(),
+                            m_employeeName,
+                            m_pCountProduct->text().toDouble(),
+                            m_pPriceProduct->text().toDouble());
+
+    m_pCountProduct->setText("");
+    m_pNameProduct->setText("");
+    m_pPriceProduct->setText("");
+
+    hide();
+}
+
+void AddSale::setEmployeeName(QString employeeName)
+{
+    m_employeeName = employeeName;
 }
 

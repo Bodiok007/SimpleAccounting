@@ -12,3 +12,13 @@ AddSaleForm::~AddSaleForm()
 {
     delete ui;
 }
+
+void AddSaleForm::setEmployeeName(QString emloyeeName)
+{
+    ui->groupBox->setEmployeeName(emloyeeName);
+}
+
+/*void AddSaleForm::addSale()
+{
+    qDebug() << "AddSaleFoem";
+}*/

@@ -50,6 +50,30 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(showAddServiceForm())
            );
 
+    m_pEditSaleForm = new EditSalesForm;
+    connect(ui->tableSales,
+            SIGNAL(editSale(uint)),
+            m_pEditSaleForm,
+            SLOT(show())
+           );
+    connect(ui->tableSales,
+            SIGNAL(editSale(uint)),
+            m_pEditSaleForm,
+            SLOT(addDataToForm(uint))
+           );
+
+    m_pEditServiceForm = new EditServicesForm;
+    connect(ui->tableServices,
+            SIGNAL(editService(uint)),
+            m_pEditServiceForm,
+            SLOT(show())
+           );
+    connect(ui->tableServices,
+            SIGNAL(editService(uint)),
+            m_pEditServiceForm,
+            SLOT(addDataToForm(uint))
+           );
+
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
 
     ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()) );
@@ -70,11 +94,13 @@ void MainWindow::setModels()
 void MainWindow::updateSalesModel()
 {
     ui->tableSales->setModel(DB::instance()->getAllSales());
+    ui->tableSales->setColumnHidden(0, true);
 }
 
 void MainWindow::updateServicesModel()
 {
     ui->tableServices->setModel(DB::instance()->getAllServices());
+    ui->tableServices->setColumnHidden(0, true);
 }
 
 
@@ -101,6 +127,16 @@ void MainWindow::showAddServiceForm()
 {
     m_pAddServiceForm->setEmployeeName(windowTitle());
     m_pAddServiceForm->show();
+}
+
+void MainWindow::showEditSaleForm()
+{
+    m_pEditSaleForm->show();
+}
+
+void MainWindow::showEditServiceForm()
+{
+    m_pEditServiceForm->show();
 }
 
 

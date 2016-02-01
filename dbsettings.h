@@ -45,11 +45,4 @@ private:
     void errorOpenMessage(QString action);
 };
 
-/*
-while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        process_line(line);
-    }
-*/
-
 #endif // DBSETTINGS_H

@@ -40,6 +40,18 @@ void ServicesTableView::slotActivatedContextMenu(QAction *pAction)
     }
     else if (pAction->objectName() == "editService") {
         qDebug() << "Редагувати сервіс";
+        emit editService(getCurrentServiceID());
     }
 
+}
+
+uint ServicesTableView::getCurrentServiceID()
+{
+    int currentRow = selectionModel()->currentIndex().row();
+
+    // 0 is hide column with ID
+    QModelIndex currentIndex = model()->index(currentRow, 0);
+    uint currentServiceID = model()->data(currentIndex).toUInt();
+
+    return currentServiceID;
 }

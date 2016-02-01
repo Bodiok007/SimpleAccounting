@@ -11,6 +11,7 @@ public:
 
 signals:
     void addService();
+    void editService(uint serviceID);
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);
@@ -21,6 +22,8 @@ protected:
 
 private:
     QMenu *m_pContextMenu;
+
+    uint getCurrentServiceID();
 };
 
 #endif // SERVICESTABLEVIEW_H

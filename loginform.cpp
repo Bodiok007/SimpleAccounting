@@ -31,9 +31,6 @@ LoginForm::LoginForm(QWidget *parent) :
 }
 
 
-
-
-
 QPushButton *LoginForm::getLoginButton()
 {
     return ui->buttonEnter;

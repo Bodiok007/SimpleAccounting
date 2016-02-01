@@ -19,10 +19,19 @@ public:
 
     QSortFilterProxyModel *getAllSales();
     QSqlQueryModel *getAllServices();
-    QMap<QString, unsigned int> *getSaleCategories();
+    QMap<QString, uint> *getSaleCategories();
 
     QStringList getListSaleCategories();
     QStringList getListServiceCategories();
+
+    QString getSaleCategoryNameByID(uint categoryID);
+    QString getServiceCategoryNameByID(uint categoryID);
+    QStringList getSaleProductsDataByID(uint productID);
+    QStringList getServiceCustomerDataByID(uint customerID);
+
+    QMap<QString, QString> &getCurrentSaleData(uint saleID);
+    QMap<QString, QString> &getCurrentServiceData(uint serviceID);
+
 
     void addSale(QString productName,
                  QString categoryName,
@@ -36,6 +45,25 @@ public:
                     QString categoryName,
                     QString orderDescription,
                     double serviceSum);
+
+    bool saveEditSale(uint saleID,
+                      QString productCategoryName,
+                      uint productID,
+                      QString productName,
+                      QString saleDate,
+                      int productCount,
+                      double productCost);
+
+    bool saveEditService(uint serviceID,
+                         QString serviceCategoryName,
+                         uint customerID,
+                         QString customerName,
+                         QString customerPhone,
+                         QString orderDescription,
+                         QString orderServiceDate,
+                         QString executionServiceDate,
+                         double serviceSum
+                        );
 
     ~DB();
 
@@ -61,13 +89,25 @@ private:
     bool getSaleCategoriesFromDB();
     bool getServiceCategoriesFromDB();
 
-    unsigned int addProduct(QString productName,
-                            double productCost);
-    unsigned int addCustomer(QString customerName,
-                             QString customerPhone);
+    bool getCurrentSaleDataFromDB(uint saleID);
+    void setCurrentSaleDataFromDB();
+    bool getCurrentServiceDataFromDB(uint serviceID);
+    void setCurrentServiceDataFromDB();
+
+    uint addProduct(QString productName,
+                    double productCost);
+    uint addCustomer(QString customerName,
+                     QString customerPhone);
+
+    bool updateProduct(uint productID,
+                       QString productName,
+                       double productCost);
+    bool updateCustomer(uint customerID,
+                        QString customerName,
+                        QString customerPhone);
 
     QString getCurrentDate();
-    unsigned int getCurrentEmployeeID(QString employeeName);
+    uint getCurrentEmployeeID(QString employeeName);
 
     DBSettings *m_pSettings;
     QSqlQuery *m_pQuery;
@@ -80,8 +120,11 @@ private:
     QSqlQueryModel *m_pModelSales;
     QSqlQueryModel *m_pModelServices;
 
-    QMap<QString, unsigned int> m_saleCategories;
-    QMap<QString, unsigned int> m_serviceCategories;
+    QMap<QString, uint> m_saleCategories;
+    QMap<QString, uint> m_serviceCategories;
+
+    QMap<QString, QString> m_currentSaleData;
+    QMap<QString, QString> m_currentServiceData;
 };
 
 #endif // DB_H

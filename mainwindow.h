@@ -5,6 +5,9 @@
 #include "addsale.h"
 #include "addserviceform.h"
 #include "loginform.h"
+#include "editsalesform.h"
+#include "editservicesform.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +28,8 @@ public:
 public slots:
     void showAddSaleForm();
     void showAddServiceForm();
+    void showEditSaleForm();
+    void showEditServiceForm();
     void logOut();
     void logIn(QString userName);
     void setModels();
@@ -36,6 +41,8 @@ private:
     LoginForm *m_pLoginForm;
     AddSale *m_pAddSaleForm;
     AddServiceForm *m_pAddServiceForm;
+    EditSalesForm *m_pEditSaleForm;
+    EditServicesForm *m_pEditServiceForm;
 
 };
 

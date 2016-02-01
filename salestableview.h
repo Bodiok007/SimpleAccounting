@@ -11,9 +11,11 @@ public:
     SalesTableView(QWidget *parent);
     ~SalesTableView();
 
+    uint getCurrentSaleID();
 
 signals:
     void addSale();
+    void editSale(uint saleID);
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);

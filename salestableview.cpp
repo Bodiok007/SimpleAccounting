@@ -4,7 +4,7 @@ SalesTableView::SalesTableView(QWidget *parent)
     : QTableView(parent)
 {
     initializeContextMenu();
-
+    //this->selectio
 }
 
 
@@ -42,14 +42,32 @@ void SalesTableView::slotActivatedContextMenu(QAction *pAction)
         emit addSale();
     }
     else if (pAction->objectName() == "editSale") {
-        qDebug() << "Редагувати поле";
+        qDebug() << "Редагувати поле " << getCurrentSaleID();
+
+        emit editSale(getCurrentSaleID());
     }
 
+}
+
+
+uint SalesTableView::getCurrentSaleID()
+{
+    int currentRow = selectionModel()->currentIndex().row();
+
+    // 0 is hide column with ID
+    QModelIndex currentIndex = model()->index(currentRow, 0);
+    uint currentSaleID = model()->data(currentIndex).toUInt();
+
+    return currentSaleID;
 }
 
 
 SalesTableView::~SalesTableView()
 {
 }
+
+
+
+
 
 

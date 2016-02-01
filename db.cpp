@@ -85,7 +85,7 @@ QString DB::logIn(QString login, QString password)
 }
 
 
-QMap<QString, unsigned int> *DB::getSaleCategories()
+QMap<QString, uint> *DB::getSaleCategories()
 {
     return &m_saleCategories;
 }
@@ -95,7 +95,7 @@ QStringList DB::getListSaleCategories()
 {
     QStringList categories;
 
-    QMapIterator<QString, unsigned int> i(m_saleCategories);
+    QMapIterator<QString, uint> i(m_saleCategories);
     while (i.hasNext()) {
         i.next();
         categories << i.key();
@@ -108,7 +108,7 @@ QStringList DB::getListServiceCategories()
 {
     QStringList categories;
 
-    QMapIterator<QString, unsigned int> i(m_serviceCategories);
+    QMapIterator<QString, uint> i(m_serviceCategories);
     while (i.hasNext()) {
         i.next();
         categories << i.key();
@@ -117,13 +117,83 @@ QStringList DB::getListServiceCategories()
     return categories;
 }
 
+QString DB::getSaleCategoryNameByID(uint categoryID)
+{
+    return m_saleCategories.key(categoryID);
+}
+
+QString DB::getServiceCategoryNameByID(uint categoryID)
+{
+    return m_serviceCategories.key(categoryID);
+}
+
+QStringList DB::getSaleProductsDataByID(uint productID)
+{
+    m_pQuery->prepare(
+                "SELECT productName, productCost "
+                "FROM products "
+                "WHERE productID = ? "
+                );
+    m_pQuery->addBindValue(productID);
+
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+        //return QStringList t;
+    }
+
+    m_pQuery->next();
+
+    QStringList productsData;
+    productsData << m_pQuery->value(0).toString()
+                 << m_pQuery->value(1).toString();
+
+    return productsData;
+}
+
+QStringList DB::getServiceCustomerDataByID(uint customerID)
+{
+    m_pQuery->prepare(
+                "SELECT customerName, customerPhone "
+                "FROM customers "
+                "WHERE customerID = ? "
+                );
+    m_pQuery->addBindValue(customerID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+    }
+
+    m_pQuery->next();
+
+    QStringList custmersData;
+    custmersData << m_pQuery->value(0).toString()
+                 << m_pQuery->value(1).toString();
+
+    return custmersData;
+}
+
+QMap<QString, QString> &DB::getCurrentSaleData(uint saleID)
+{
+    getCurrentSaleDataFromDB(saleID);
+    return m_currentSaleData;
+}
+
+QMap<QString, QString> &DB::getCurrentServiceData(uint serviceID)
+{
+    getCurrentServiceDataFromDB(serviceID);
+    return m_currentServiceData;
+}
+
 void DB::addSale(QString productName,
                  QString categoryName,
                  QString employeeName,
                  double productCount,
                  double productCost)
 {
-    unsigned int productID = addProduct(productName, productCost);
+    uint productID = addProduct(productName, productCost);
     if (productID == NULL) {
         qDebug() << m_pQuery->lastQuery();
         return;
@@ -131,7 +201,7 @@ void DB::addSale(QString productName,
 
     double saleSum = productCount * productCost;
 
-    unsigned int employeeID = getCurrentEmployeeID(employeeName);
+    uint employeeID = getCurrentEmployeeID(employeeName);
     if (employeeID == NULL) {
         qDebug() << m_pQuery->lastQuery();
         return;
@@ -167,6 +237,7 @@ void DB::addSale(QString productName,
 
 }
 
+
 void DB::addService(QString customerName,
                     QString customerPhone,
                     QString employeeName,
@@ -174,13 +245,13 @@ void DB::addService(QString customerName,
                     QString orderDescription,
                     double serviceSum)
 {
-    unsigned int customerID = addCustomer(customerName, customerPhone);
+    uint customerID = addCustomer(customerName, customerPhone);
     if (customerID == NULL) {
         qDebug() << m_pQuery->lastQuery();
         return;
     }
 
-    unsigned int employeeID = getCurrentEmployeeID(employeeName);
+    uint employeeID = getCurrentEmployeeID(employeeName);
     if (employeeID == NULL) {
         qDebug() << m_pQuery->lastQuery();
         return;
@@ -206,18 +277,97 @@ void DB::addService(QString customerName,
     m_pQuery->addBindValue(serviceSum);
 
     if (!m_pQuery->exec()) {
-        /*qDebug() << productCount << " "
-                 << productCost << " "
-                 << m_saleCategories[productName];*/
         qDebug() << m_pQuery->lastError();
         qDebug() << m_pQuery->lastQuery();
+        return;
     }
 
     emit updateServicesData();
 }
 
+bool DB::saveEditSale(uint saleID,
+                     QString productCategoryName,
+                     uint productID,
+                     QString productName,
+                     QString saleDate,
+                     int productCount,
+                     double productCost)
+{
+    bool ok = updateProduct(productID, productName, productCost);
+    if (!ok) {
+        qDebug() << "Can`t update product";
+    }
 
-unsigned int DB::addProduct(QString productName,
+    m_pQuery->prepare(
+                "UPDATE sales SET "
+                    "productCategoryID = ?, "
+                    "productCount = ?, "
+                    "saleDate = ?, "
+                    "saleSum = ? "
+                "WHERE saleID = ? "
+                );
+    m_pQuery->addBindValue(m_saleCategories[productCategoryName]);
+    m_pQuery->addBindValue(productCount);
+    m_pQuery->addBindValue(saleDate);
+    m_pQuery->addBindValue(productCount * productCost);
+    m_pQuery->addBindValue(saleID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastError();
+        qDebug() << "Can`t save edit data";
+        return false;
+    }
+
+    emit updateSalesData();
+
+    return true;
+}
+
+bool DB::saveEditService(uint serviceID,
+                         QString serviceCategoryName,
+                         uint customerID,
+                         QString customerName,
+                         QString customerPhone,
+                         QString orderDescription,
+                         QString orderServiceDate,
+                         QString executionServiceDate,
+                         double serviceSum)
+{
+    bool ok = updateCustomer(customerID, customerName, customerPhone);
+    if (!ok) {
+        qDebug() << "Can`t update customer";
+    }
+
+    m_pQuery->prepare(
+                "UPDATE provideServices SET "
+                    "serviceCategoryID = ?, "
+                    "orderDescription = ?, "
+                    "orderServiceDate = ?, "
+                    "executionServiceDate = ?, "
+                    "serviceSum = ? "
+                "WHERE provideServicesID = ? "
+                );
+    m_pQuery->addBindValue(m_serviceCategories[serviceCategoryName]);
+    m_pQuery->addBindValue(orderDescription);
+    m_pQuery->addBindValue(orderServiceDate);
+    m_pQuery->addBindValue(executionServiceDate);
+    m_pQuery->addBindValue(serviceSum);
+    m_pQuery->addBindValue(serviceID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastError();
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << "Can`t save edit data";
+        return false;
+    }
+
+    emit updateServicesData();
+
+    return true;
+}
+
+
+uint DB::addProduct(QString productName,
                             double productCost)
 {
     m_pQuery->prepare(
@@ -236,7 +386,8 @@ unsigned int DB::addProduct(QString productName,
     return NULL;
 }
 
-unsigned int DB::addCustomer(QString customerName,
+
+uint DB::addCustomer(QString customerName,
                              QString customerPhone)
 {
     m_pQuery->prepare(
@@ -255,13 +406,63 @@ unsigned int DB::addCustomer(QString customerName,
     return NULL;
 }
 
+
+bool DB::updateProduct(uint productID,
+                       QString productName,
+                       double productCost)
+{
+    m_pQuery->prepare(
+                    "UPDATE products SET "
+                        "productName = ?, "
+                        "productCost = ? "
+                    "WHERE productID = ? "
+                    );
+    m_pQuery->addBindValue(productName);
+    m_pQuery->addBindValue(productCost);
+    m_pQuery->addBindValue(productID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+        return false;
+    }
+
+    return true;
+}
+
+
+bool DB::updateCustomer(uint customerID,
+                        QString customerName,
+                        QString customerPhone)
+{
+    m_pQuery->prepare(
+                    "UPDATE customers SET "
+                        "customerName = ?, "
+                        "customerPhone = ? "
+                    "WHERE customerID = ? "
+                    );
+    m_pQuery->addBindValue(customerName);
+    m_pQuery->addBindValue(customerPhone);
+    m_pQuery->addBindValue(customerID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+        return false;
+    }
+
+    return true;
+}
+
+
 QString DB::getCurrentDate()
 {
     QDate dateToday = QDate::currentDate();
     return dateToday.toString("dd.MM.yyyy");
 }
 
-unsigned int DB::getCurrentEmployeeID(QString employeeName)
+
+uint DB::getCurrentEmployeeID(QString employeeName)
 {
     m_pQuery->prepare(
                 "SELECT employeeID FROM employees "
@@ -271,11 +472,13 @@ unsigned int DB::getCurrentEmployeeID(QString employeeName)
     m_pQuery->exec();
 
     if (m_pQuery->size() <= 0) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
         return NULL;
     }
 
     m_pQuery->next();
-    unsigned int employeeID = m_pQuery->value(0).toUInt();
+    uint employeeID = m_pQuery->value(0).toUInt();
 
     return employeeID;
 }
@@ -296,12 +499,13 @@ bool DB::getSaleCategoriesFromDB()
 
     while (m_pQuery->next()) {
         QString categoryName = m_pQuery->value(0).toString();
-        unsigned int categoryID = m_pQuery->value(1).toUInt();
+        uint categoryID = m_pQuery->value(1).toUInt();
         m_saleCategories[categoryName] = categoryID;
     }
 
     return &m_saleCategories;
 }
+
 
 bool DB::getServiceCategoriesFromDB()
 {
@@ -318,7 +522,7 @@ bool DB::getServiceCategoriesFromDB()
 
     while (m_pQuery->next()) {
         QString categoryName = m_pQuery->value(0).toString();
-        unsigned int categoryID = m_pQuery->value(1).toUInt();
+        uint categoryID = m_pQuery->value(1).toUInt();
         m_serviceCategories[categoryName] = categoryID;
     }
 
@@ -326,10 +530,103 @@ bool DB::getServiceCategoriesFromDB()
 }
 
 
+bool DB::getCurrentSaleDataFromDB(uint saleID)
+{
+    m_pQuery->prepare(
+                "SELECT productID, "
+                    "productCategoryID, "
+                    "productCount, "
+                    "saleDate "
+                "FROM sales "
+                "WHERE saleID = ?"
+                );
+    m_pQuery->addBindValue(saleID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+        return false;
+    }
+
+    setCurrentSaleDataFromDB();
+
+    return true;
+}
+
+
+void DB::setCurrentSaleDataFromDB()
+{
+    QStringList fieldNames;
+    fieldNames << "productID"
+               << "productCategoryID"
+               << "productCount"
+               << "saleDate";
+
+    m_pQuery->next();
+
+    for (int currentField = 0;
+         currentField < fieldNames.size();
+         ++currentField) {
+
+        m_currentSaleData[fieldNames.at(currentField)]
+                = m_pQuery->value(currentField).toString();
+    }
+}
+
+
+bool DB::getCurrentServiceDataFromDB(uint serviceID)
+{
+    m_pQuery->prepare(
+                "SELECT serviceCategoryID, "
+                    "customerID, "
+                    "orderDescription, "
+                    "orderServiceDate, "
+                    "executionServiceDate, "
+                    "serviceSum "
+                "FROM provideservices "
+                "WHERE provideServicesID = ?"
+                );
+    m_pQuery->addBindValue(serviceID);
+
+    if (!m_pQuery->exec()) {
+        qDebug() << m_pQuery->lastQuery();
+        qDebug() << m_pQuery->lastError();
+        return false;
+    }
+
+    setCurrentServiceDataFromDB();
+
+    return true;
+}
+
+
+void DB::setCurrentServiceDataFromDB()
+{
+    QStringList fieldNames;
+    fieldNames << "serviceCategoryID"
+               << "customerID"
+               << "orderDescription"
+               << "orderServiceDate"
+               << "executionServiceDate"
+               << "serviceSum";
+
+    m_pQuery->next();
+
+    for (int currentField = 0;
+         currentField < fieldNames.size();
+         ++currentField) {
+
+        m_currentServiceData[fieldNames.at(currentField)]
+                = m_pQuery->value(currentField).toString();
+    }
+}
+
+
 QSortFilterProxyModel *DB::getAllSales()
 {
     m_pModelSales->setQuery(
-                "SELECT products.productName, "
+                "SELECT sales.saleID, "
+                    "products.productName, "
                     "productcategories.productCategoryName, "
                     "employees.employeeName, "
                     "sales.productCount, "
@@ -369,7 +666,8 @@ bool DB::setHeaderModelSales()
     }
 
     QStringList lst;
-    lst << "Товар"
+    lst << "ID"
+        << "Товар"
         << "Категорія"
         << "Продавець"
         << "Кількість"
@@ -395,7 +693,8 @@ bool DB::setHeaderModelSales()
 QSqlQueryModel *DB::getAllServices()
 {
     m_pModelServices->setQuery(
-                "SELECT servicecategories.serviceCategoryName, "
+                "SELECT provideservices.provideServicesID, "
+                    "servicecategories.serviceCategoryName, "
                     "provideservices.orderDescription, "
                     "employees.employeeName, "
                     "customers.customerName, "
@@ -434,7 +733,8 @@ bool DB::setHeaderModelServices()
     }
 
     QStringList lst;
-    lst << "Категорія"
+    lst << "ID"
+        << "Категорія"
         << "Опис"
         << "Працівник"
         << "Замовник"
@@ -448,9 +748,10 @@ bool DB::setHeaderModelServices()
     for (int currentHeaderColumn = 0;
          currentHeaderColumn < numHeaderCeil;
          ++currentHeaderColumn) {
-       m_pModelServices->setHeaderData(currentHeaderColumn,
-                                       Qt::Horizontal,
-                                       lst.at(currentHeaderColumn));
+
+       m_pModelServices->setHeaderData(currentHeaderColumn
+                                       , Qt::Horizontal
+                                       , lst.at(currentHeaderColumn));
     }
 
     return true;

@@ -63,8 +63,6 @@ void AddSale::createAddButton()
 
 void AddSale::addSale()
 {
-
-    qDebug() << "AddSale " << m_pCategoryProduct->currentText() << " " << m_employeeName;
     DB::instance()->addSale(m_pNameProduct->text(),
                             m_pCategoryProduct->currentText(),
                             m_employeeName,

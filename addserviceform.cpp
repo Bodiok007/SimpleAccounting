@@ -7,8 +7,7 @@ AddServiceForm::AddServiceForm(QWidget *parent) :
     ui(new Ui::AddServiceForm)
 {
     ui->setupUi(this);
-
-    setWindowTitle("accounting");
+    ui->lineServiceSum->setValidator(new QDoubleValidator);
 
     setAttribute(Qt::WA_ShowModal);
 

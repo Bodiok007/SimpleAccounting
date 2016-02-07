@@ -9,7 +9,6 @@ DB::DB(QObject *parent) : QObject(parent)
 
     m_pModelSales = new QSqlQueryModel;
     m_pProxyModelSales = new QSortFilterProxyModel;
-
     m_pModelServices = new QSqlQueryModel;
     m_pProxyModelServices = new QSortFilterProxyModel;
 
@@ -104,6 +103,7 @@ QStringList DB::getListSaleCategories()
     return categories;
 }
 
+
 QStringList DB::getListServiceCategories()
 {
     QStringList categories;
@@ -117,15 +117,18 @@ QStringList DB::getListServiceCategories()
     return categories;
 }
 
+
 QString DB::getSaleCategoryNameByID(uint categoryID)
 {
     return m_saleCategories.key(categoryID);
 }
 
+
 QString DB::getServiceCategoryNameByID(uint categoryID)
 {
     return m_serviceCategories.key(categoryID);
 }
+
 
 QStringList DB::getSaleProductsDataByID(uint productID)
 {
@@ -152,6 +155,7 @@ QStringList DB::getSaleProductsDataByID(uint productID)
     return productsData;
 }
 
+
 QStringList DB::getServiceCustomerDataByID(uint customerID)
 {
     m_pQuery->prepare(
@@ -175,17 +179,20 @@ QStringList DB::getServiceCustomerDataByID(uint customerID)
     return custmersData;
 }
 
+
 QMap<QString, QString> &DB::getCurrentSaleData(uint saleID)
 {
     getCurrentSaleDataFromDB(saleID);
     return m_currentSaleData;
 }
 
+
 QMap<QString, QString> &DB::getCurrentServiceData(uint serviceID)
 {
     getCurrentServiceDataFromDB(serviceID);
     return m_currentServiceData;
 }
+
 
 void DB::addSale(QString productName,
                  QString categoryName,
@@ -210,7 +217,7 @@ void DB::addSale(QString productName,
     m_pQuery->prepare(
                 "INSERT INTO sales "
                     "(employeeID, "
-                    "productCategoryID, "
+                    "saleCategoryID, "
                     "productID, "
                     "productCount, "
                     "saleDate, "
@@ -234,7 +241,6 @@ void DB::addSale(QString productName,
     }
 
     emit updateSalesData();
-
 }
 
 
@@ -285,8 +291,9 @@ void DB::addService(QString customerName,
     emit updateServicesData();
 }
 
+
 bool DB::saveEditSale(uint saleID,
-                     QString productCategoryName,
+                     QString saleCategoryName,
                      uint productID,
                      QString productName,
                      QString saleDate,
@@ -300,13 +307,13 @@ bool DB::saveEditSale(uint saleID,
 
     m_pQuery->prepare(
                 "UPDATE sales SET "
-                    "productCategoryID = ?, "
+                    "saleCategoryID = ?, "
                     "productCount = ?, "
                     "saleDate = ?, "
                     "saleSum = ? "
                 "WHERE saleID = ? "
                 );
-    m_pQuery->addBindValue(m_saleCategories[productCategoryName]);
+    m_pQuery->addBindValue(m_saleCategories[saleCategoryName]);
     m_pQuery->addBindValue(productCount);
     m_pQuery->addBindValue(saleDate);
     m_pQuery->addBindValue(productCount * productCost);
@@ -322,6 +329,7 @@ bool DB::saveEditSale(uint saleID,
 
     return true;
 }
+
 
 bool DB::saveEditService(uint serviceID,
                          QString serviceCategoryName,
@@ -487,9 +495,9 @@ uint DB::getCurrentEmployeeID(QString employeeName)
 bool DB::getSaleCategoriesFromDB()
 {
     m_pQuery->exec(
-                "SELECT productcategories.productCategoryName, "
-                    "productcategories.productCategoryID "
-                "FROM productcategories"
+                "SELECT salecategories.saleCategoryName, "
+                    "salecategories.saleCategoryID "
+                "FROM salecategories"
                 );
 
     if (m_pQuery->size() <= 0) {
@@ -534,7 +542,7 @@ bool DB::getCurrentSaleDataFromDB(uint saleID)
 {
     m_pQuery->prepare(
                 "SELECT productID, "
-                    "productCategoryID, "
+                    "saleCategoryID, "
                     "productCount, "
                     "saleDate "
                 "FROM sales "
@@ -558,7 +566,7 @@ void DB::setCurrentSaleDataFromDB()
 {
     QStringList fieldNames;
     fieldNames << "productID"
-               << "productCategoryID"
+               << "saleCategoryID"
                << "productCount"
                << "saleDate";
 
@@ -627,7 +635,7 @@ QSortFilterProxyModel *DB::getAllSales()
     m_pModelSales->setQuery(
                 "SELECT sales.saleID, "
                     "products.productName, "
-                    "productcategories.productCategoryName, "
+                    "salecategories.saleCategoryName, "
                     "employees.employeeName, "
                     "sales.productCount, "
                     "sales.saleDate, "
@@ -639,9 +647,9 @@ QSortFilterProxyModel *DB::getAllSales()
                 "ON products.productID "
                     "= sales.productID "
 
-                "LEFT JOIN productcategories "
-                "ON productcategories.productCategoryID "
-                    "= sales.productCategoryID "
+                "LEFT JOIN salecategories "
+                "ON salecategories.saleCategoryID "
+                    "= sales.saleCategoryID "
 
                 "LEFT JOIN employees "
                 "ON employees.employeeID "
@@ -768,8 +776,6 @@ DB *DB::m_instance;
 
 DB::~DB()
 {
-    delete m_pModelSales;
-    delete m_pModelServices;
     delete m_pSettings;
     delete m_instance;
 }

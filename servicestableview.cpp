@@ -35,11 +35,9 @@ void ServicesTableView::contextMenuEvent(QContextMenuEvent *pe)
 void ServicesTableView::slotActivatedContextMenu(QAction *pAction)
 {
     if (pAction->objectName() == "addService") {
-        qDebug() << "Додати сервіс";
         emit addService();
     }
     else if (pAction->objectName() == "editService") {
-        qDebug() << "Редагувати сервіс";
         emit editService(getCurrentServiceID());
     }
 

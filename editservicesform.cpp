@@ -7,6 +7,7 @@ EditServicesForm::EditServicesForm(QWidget *parent) :
     ui(new Ui::EditServicesForm)
 {
     ui->setupUi(this);
+    ui->lineSum->setValidator(new QDoubleValidator);
 
     setAttribute(Qt::WA_ShowModal);
 

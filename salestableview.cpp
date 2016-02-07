@@ -4,7 +4,7 @@ SalesTableView::SalesTableView(QWidget *parent)
     : QTableView(parent)
 {
     initializeContextMenu();
-    //this->selectio
+    setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 
@@ -38,12 +38,9 @@ void SalesTableView::contextMenuEvent(QContextMenuEvent *pe)
 void SalesTableView::slotActivatedContextMenu(QAction *pAction)
 {
     if (pAction->objectName() == "addSale") {
-        qDebug() << "Додати продажу";
         emit addSale();
     }
     else if (pAction->objectName() == "editSale") {
-        qDebug() << "Редагувати поле " << getCurrentSaleID();
-
         emit editSale(getCurrentSaleID());
     }
 

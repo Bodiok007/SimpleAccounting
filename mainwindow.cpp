@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pLoginForm = new LoginForm(0);
     m_pLoginForm->show();
 
-    //this->hide();
-
     setModels();
 
     connect(DB::instance(),
@@ -149,7 +147,7 @@ void MainWindow::logOut()
 
 void MainWindow::logIn(QString userName)
 {
-    this->setWindowTitle(userName);
+    this->setWindowTitle("Accounting - " + userName);
     this->show();
     qDebug() << "userLogged!" + userName;
 }
@@ -159,6 +157,9 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete m_pAddSaleForm;
+    delete m_pAddServiceForm;
+    delete m_pEditSaleForm;
+    delete m_pEditServiceForm;
     delete m_pLoginForm;
 }
 

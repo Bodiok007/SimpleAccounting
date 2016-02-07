@@ -7,14 +7,14 @@ AddSale::AddSale(QWidget *parent)
     m_pGridLayout = new QGridLayout;
 
     createLabels();
-
     createFields();
-
     createAddButton();
 
     setLayout(m_pGridLayout);
 
     setAttribute(Qt::WA_ShowModal);
+    setWindowTitle("Додавання продажі");
+    setWindowIcon(*(new QIcon(":/logo.png")));
 
     connect(m_pAddSale,
             SIGNAL(clicked(bool)),
@@ -44,7 +44,9 @@ void AddSale::createFields()
     m_pCategoryProduct = new QComboBox;
     m_pCategoryProduct->addItems(DB::instance()->getListSaleCategories());
     m_pCountProduct = new QLineEdit;
+    m_pCountProduct->setValidator(new QIntValidator);
     m_pPriceProduct = new QLineEdit;
+    m_pPriceProduct->setValidator(new QDoubleValidator);
 
     m_pGridLayout->addWidget(m_pNameProduct, 1, 0);
     m_pGridLayout->addWidget(m_pCategoryProduct, 1, 1);

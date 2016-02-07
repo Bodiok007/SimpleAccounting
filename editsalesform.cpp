@@ -7,6 +7,8 @@ EditSalesForm::EditSalesForm(QWidget *parent) :
     ui(new Ui::EditSalesForm)
 {
     ui->setupUi(this);
+    ui->lineProductCost->setValidator(new QDoubleValidator);
+    ui->lineProductCount->setValidator(new QIntValidator);
 
     setAttribute(Qt::WA_ShowModal);
 
@@ -16,10 +18,12 @@ EditSalesForm::EditSalesForm(QWidget *parent) :
            );
 }
 
+
 EditSalesForm::~EditSalesForm()
 {
     delete ui;
 }
+
 
 void EditSalesForm::addDataToForm(uint saleID)
 {
@@ -42,6 +46,7 @@ void EditSalesForm::addDataToForm(uint saleID)
     ui->lineProductCount->setText(m_generalData["productCount"]);
 }
 
+
 void EditSalesForm::saveEditData()
 {
     qDebug() << "edit button sale ok";
@@ -55,6 +60,7 @@ void EditSalesForm::saveEditData()
                                 );
     hide();
 }
+
 
 void EditSalesForm::clearEditForm()
 {

@@ -22,7 +22,11 @@ SOURCES += main.cpp\
     dbsettings.cpp \
     addserviceform.cpp \
     editsalesform.cpp \
-    editservicesform.cpp
+    editservicesform.cpp \
+    salesmodel.cpp \
+    servicecategories.cpp \
+    servicesmodel.cpp \
+    salecategories.cpp
 
 HEADERS  += mainwindow.h \
     db.h \
@@ -34,7 +38,11 @@ HEADERS  += mainwindow.h \
     dbsettings.h \
     addserviceform.h \
     editsalesform.h \
-    editservicesform.h
+    editservicesform.h \
+    salesmodel.h \
+    servicecategories.h \
+    servicesmodel.h \
+    salecategories.h
 
 FORMS    += \
     mainwindow.ui \

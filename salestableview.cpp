@@ -5,6 +5,7 @@ SalesTableView::SalesTableView(QWidget *parent)
 {
     initializeContextMenu();
     setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_pSalesModel = new SalesModel;
 }
 
 
@@ -46,6 +47,11 @@ void SalesTableView::slotActivatedContextMenu(QAction *pAction)
 
 }
 
+void SalesTableView::setSalesModel()
+{
+    setModel(m_pSalesModel->getModel());
+}
+
 
 uint SalesTableView::getCurrentSaleID()
 {
@@ -62,9 +68,3 @@ uint SalesTableView::getCurrentSaleID()
 SalesTableView::~SalesTableView()
 {
 }
-
-
-
-
-
-

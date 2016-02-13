@@ -2,7 +2,7 @@
 #define BASETABLEVIEW_H
 
 #include <QtWidgets>
-//#include <QtSql>
+#include "salesmodel.h"
 
 class SalesTableView : public QTableView
 {
@@ -19,6 +19,7 @@ signals:
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);
+    void setSalesModel();
 
 protected:
     virtual void contextMenuEvent(QContextMenuEvent *pe);
@@ -26,6 +27,7 @@ protected:
 
 private:
     QMenu *m_contextMenu;
+    SalesModel *m_pSalesModel;
 };
 
 #endif // BASETABLEVIEW_H

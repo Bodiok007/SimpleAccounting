@@ -1,9 +1,12 @@
 #include "addsale.h"
 #include "db.h"
+#include "salecategories.h"
 
 AddSale::AddSale(QWidget *parent)
     : QGroupBox(parent)
 {
+    m_pSaleCategories = SaleCategories::instance()->getCategories();
+
     m_pGridLayout = new QGridLayout;
 
     createLabels();
@@ -21,6 +24,7 @@ AddSale::AddSale(QWidget *parent)
             this,
             SLOT(addSale())
            );
+
 }
 
 
@@ -38,11 +42,12 @@ void AddSale::createLabels()
 
 }
 
+
 void AddSale::createFields()
 {
     m_pNameProduct = new QLineEdit;
     m_pCategoryProduct = new QComboBox;
-    m_pCategoryProduct->addItems(DB::instance()->getListSaleCategories());
+    m_pCategoryProduct->addItems(getListCategories());
     m_pCountProduct = new QLineEdit;
     m_pCountProduct->setValidator(new QIntValidator);
     m_pPriceProduct = new QLineEdit;
@@ -54,6 +59,7 @@ void AddSale::createFields()
     m_pGridLayout->addWidget(m_pPriceProduct, 1, 3);
 }
 
+
 void AddSale::createAddButton()
 {
     m_pAddSale = new QPushButton;
@@ -63,23 +69,134 @@ void AddSale::createAddButton()
     m_pGridLayout->addWidget(m_pAddSale, 2, 3);
 }
 
-void AddSale::addSale()
-{
-    DB::instance()->addSale(m_pNameProduct->text(),
-                            m_pCategoryProduct->currentText(),
-                            m_employeeName,
-                            m_pCountProduct->text().toDouble(),
-                            m_pPriceProduct->text().toDouble());
 
+void AddSale::clearFields()
+{
     m_pCountProduct->clear();
     m_pNameProduct->clear();
     m_pPriceProduct->clear();
+}
+
+
+void AddSale::message(QString text)
+{
+    QMessageBox msgBox;
+    msgBox.setText(text);
+    msgBox.exec();
+}
+
+
+bool AddSale::addProduct()
+{
+    QString query = "INSERT INTO products (productName, productCost) "
+                    "VALUES (?, ?) ";
+    QStringList arguments;
+    arguments << m_pNameProduct->text()
+              << m_pPriceProduct->text();
+
+    bool statusOk = DB::instance()->query(query, arguments);
+    if (!statusOk) {
+        qDebug() << DB::instance()->lastError();
+        message("Помилка при додаванні товару!");
+        return false;
+    }
+
+    return true;
+}
+
+
+uint AddSale::getEmployeeID()
+{
+    QStringList arguments(m_employeeName);
+    QString query = "SELECT employeeID FROM employees "
+                    "WHERE employeeName = ? ";
+
+    bool statusOk = DB::instance()->query(query, arguments);
+    if (!statusOk) {
+        qDebug() << DB::instance()->lastError();
+        message("Помилка отримання ідентифікатора користувача!");
+        return NULL;
+    }
+
+    QSqlQuery *data = DB::instance()->getData();
+    data->next();
+    uint employeeID = data->value(0).toUInt();
+
+    return employeeID;
+}
+
+
+QString AddSale::getCurrentData()
+{
+    QDate dateToday = QDate::currentDate();
+    return dateToday.toString("dd.MM.yyyy");
+}
+
+
+void AddSale::addSale()
+{
+    if (!addProduct()) {
+        return;
+    }
+    uint productID = DB::instance()->lastInsertId().toUInt();
+
+    uint employeeID = getEmployeeID();
+    if (employeeID == 0) {
+        return;
+    }
+
+    QString saleCategoryID = (*m_pSaleCategories)[m_pCategoryProduct->currentText()];
+
+    double saleSum = m_pPriceProduct->text().toDouble() * m_pCountProduct->text().toDouble();
+
+    QString query(
+              "INSERT INTO sales "
+                  "(employeeID, "
+                  "saleCategoryID, "
+                  "productID, "
+                  "productCount, "
+                  "saleDate, "
+                  "saleSum) "
+              "VALUES (?, ?, ?, ?, ?, ?) "
+              );
+    QStringList arguments;
+    arguments << QString::number(employeeID)
+              << saleCategoryID
+              << QString::number(productID)
+              << m_pCountProduct->text()
+              << getCurrentData()
+              << QString::number(saleSum);
+
+    bool statusOk = DB::instance()->query(query, arguments);
+    if (!statusOk) {
+        qDebug() << DB::instance()->lastError();
+        message("Помилка додавання продажі!");
+    }
+
+    emit updateSalesData();
+
+    clearFields();
 
     hide();
 }
 
+
 void AddSale::setEmployeeName(QString employeeName)
 {
     m_employeeName = employeeName;
+}
+
+
+QStringList AddSale::getListCategories()
+{
+    QStringList categories;
+
+    QMapIterator<QString, QString> i(*m_pSaleCategories);
+    while (i.hasNext()) {
+        i.next();
+        categories << i.key();
+    }
+
+    return categories;
 }
 

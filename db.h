@@ -11,59 +11,39 @@
  *
  */
 
+class DB;
+
+class DBDestroyer
+{
+private:
+    DB* m_pInstance;
+public:
+    ~DBDestroyer();
+    void initialize(DB* db);
+};
+
+
+enum TypeObjectsQuery { qSqlQueryModelForSales, qSqlQueryModelForServices, qSqlQuery };
+
+
 class DB : public QObject
 {
     Q_OBJECT
 public:
     static DB *instance();
 
-    QSortFilterProxyModel *getAllSales();
-    QSqlQueryModel *getAllServices();
-    QMap<QString, uint> *getSaleCategories();
+    bool query(QString &query,
+               QStringList &arguments,
+               QSqlQueryModel *model);
 
-    QStringList getListSaleCategories();
-    QStringList getListServiceCategories();
+    bool query(QString &query,
+               QStringList &arguments);
 
-    QString getSaleCategoryNameByID(uint categoryID);
-    QString getServiceCategoryNameByID(uint categoryID);
-    QStringList getSaleProductsDataByID(uint productID);
-    QStringList getServiceCustomerDataByID(uint customerID);
+    bool query(QString &query);
 
-    QMap<QString, QString> &getCurrentSaleData(uint saleID);
-    QMap<QString, QString> &getCurrentServiceData(uint serviceID);
-
-
-    void addSale(QString productName,
-                 QString categoryName,
-                 QString employeeName,
-                 double productCount,
-                 double productCost);
-
-    void addService(QString customerName,
-                    QString customerPhone,
-                    QString employeeName,
-                    QString categoryName,
-                    QString orderDescription,
-                    double serviceSum);
-
-    bool saveEditSale(uint saleID,
-                      QString productCategoryName,
-                      uint productID,
-                      QString productName,
-                      QString saleDate,
-                      int productCount,
-                      double productCost);
-
-    bool saveEditService(uint serviceID,
-                         QString serviceCategoryName,
-                         uint customerID,
-                         QString customerName,
-                         QString customerPhone,
-                         QString orderDescription,
-                         QString orderServiceDate,
-                         QString executionServiceDate,
-                         double serviceSum
-                        );
+    QSqlError lastError() const;
+    QVariant lastInsertId() const;
+    QSqlQuery *getData() const;
 
     ~DB();
 
@@ -83,48 +63,33 @@ public slots:
     QString logIn(QString login, QString password);
 
 private:
-    bool setHeaderModelSales();
-    bool setHeaderModelServices();
+    explicit DB(QObject *parent = 0);
 
-    bool getSaleCategoriesFromDB();
-    bool getServiceCategoriesFromDB();
+    static DB *m_pInstance;
+    static DBDestroyer m_destroyer;
 
-    bool getCurrentSaleDataFromDB(uint saleID);
-    void setCurrentSaleDataFromDB();
-    bool getCurrentServiceDataFromDB(uint serviceID);
-    void setCurrentServiceDataFromDB();
+    friend class DBDestroyer;
 
-    uint addProduct(QString productName,
-                    double productCost);
-    uint addCustomer(QString customerName,
-                     QString customerPhone);
-
-    bool updateProduct(uint productID,
-                       QString productName,
-                       double productCost);
-    bool updateCustomer(uint customerID,
-                        QString customerName,
-                        QString customerPhone);
-
-    QString getCurrentDate();
-    uint getCurrentEmployeeID(QString employeeName);
-
+    QSqlDatabase m_db;
     DBSettings *m_pSettings;
     QSqlQuery *m_pQuery;
 
-    explicit DB(QObject *parent = 0);
-    static DB *m_instance;
-    QSqlDatabase m_db;
-    QSortFilterProxyModel *m_pProxyModelSales;
-    QSortFilterProxyModel *m_pProxyModelServices;
     QSqlQueryModel *m_pModelSales;
     QSqlQueryModel *m_pModelServices;
 
-    QMap<QString, uint> m_saleCategories;
-    QMap<QString, uint> m_serviceCategories;
+    TypeObjectsQuery m_typeObjectsQuery;
 
-    QMap<QString, QString> m_currentSaleData;
-    QMap<QString, QString> m_currentServiceData;
+    bool queryWithoutParameters(QString &query,
+                                QSqlQueryModel *model);
+
+    bool queryWithParameters(QString &query,
+                             QStringList &arguments,
+                             QSqlQueryModel *model);
+
+    bool queryWithoutParameters(QString &query);
+
+    bool queryWithParameters(QString &query,
+                             QStringList &arguments);
 };
 
 #endif // DB_H

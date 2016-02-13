@@ -1,82 +1,106 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "db.h"
 #include "ui_addsaleform.h"
-
+#include "db.h"
 #include "dbsettings.h"
+#include "servicecategories.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //setAttribute(Qt::WA_DeleteOnClose);
 
     m_pAddSaleForm = new AddSale(0);
+    m_pAddServiceForm = new AddServiceForm;
+
+    m_pLoginForm = new LoginForm;
+    m_pLoginForm->show();
+    connect(m_pLoginForm, SIGNAL(logged(QString)), SLOT(logIn(QString)) );
+
+    m_pEditSaleForm = new EditSalesForm;
+    m_pEditServiceForm = new EditServicesForm;
+
+    bindSignalsAndSlotsForSales();
+    bindSignalsAndSlotsForServices();
+
+    setModels();
+
+    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
+    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()) );   
+}
+
+
+void MainWindow::bindSignalsAndSlotsForSales()
+{
+    // clicked button 'add sale' - show 'add sale form'
     connect(ui->addSaleButton,
             SIGNAL(clicked(bool)),
             SLOT(showAddSaleForm())
            );
 
-    m_pAddServiceForm = new AddServiceForm;
-    connect(ui->addServiceButton,
-            SIGNAL(clicked(bool)),
-            SLOT(showAddServiceForm())
-           );
-
-    m_pLoginForm = new LoginForm(0);
-    m_pLoginForm->show();
-
-    setModels();
-
-    connect(DB::instance(),
-            SIGNAL(updateSalesData()),
-            SLOT(updateSalesModel())
-           );
-
-    connect(DB::instance(),
-            SIGNAL(updateServicesData()),
-            SLOT(updateServicesModel())
-           );
-
+    // clicked in context menu 'add sale' - show 'add sale form'
     connect(ui->tableSales,
             SIGNAL(addSale()),
             SLOT(showAddSaleForm())
            );
 
+    // request from 'add sale form' for update data in 'sales table'
+    connect(m_pAddSaleForm,
+            SIGNAL(updateSalesData()),
+            SLOT(updateSalesModel())
+           );
+
+    // clicked in context menu 'edit sale' - show 'edit sale form' with clicked item data
+    connect(ui->tableSales,
+            SIGNAL(editSale(uint)),
+            m_pEditSaleForm,
+            SLOT(addDataToForm(uint))
+           );
+
+    // request from 'edit sale form' for update data in 'sales table'
+    connect(m_pEditSaleForm,
+            SIGNAL(updateSalesData()),
+            SLOT(updateSalesModel())
+           );
+
+
+}
+
+
+void MainWindow::bindSignalsAndSlotsForServices()
+{
+    // clicked button 'add service' - show 'add service form'
+    connect(ui->addServiceButton,
+            SIGNAL(clicked(bool)),
+            SLOT(showAddServiceForm())
+           );
+
+    // clicked in context menu 'add service' - show 'add service form'
     connect(ui->tableServices,
             SIGNAL(addService()),
             SLOT(showAddServiceForm())
            );
 
-    m_pEditSaleForm = new EditSalesForm;
-    connect(ui->tableSales,
-            SIGNAL(editSale(uint)),
-            m_pEditSaleForm,
-            SLOT(show())
-           );
-    connect(ui->tableSales,
-            SIGNAL(editSale(uint)),
-            m_pEditSaleForm,
-            SLOT(addDataToForm(uint))
+    // request from 'add service form' for update 'service table'
+    connect(m_pAddServiceForm,
+            SIGNAL(updateServicesData()),
+            SLOT(updateServicesModel())
            );
 
-    m_pEditServiceForm = new EditServicesForm;
-    connect(ui->tableServices,
-            SIGNAL(editService(uint)),
-            m_pEditServiceForm,
-            SLOT(show())
-           );
+    // clicked in context menu 'edit service' - show 'edit service form' with clicked item data
     connect(ui->tableServices,
             SIGNAL(editService(uint)),
             m_pEditServiceForm,
             SLOT(addDataToForm(uint))
            );
 
-    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 35px; }");
-
-    ui->toolBar->addAction(QPixmap(":/logOut.png"), "Вихід", this, SLOT(logOut()) );
-
-    connect(m_pLoginForm, SIGNAL(logged(QString)), SLOT(logIn(QString)) );
+    // request from 'edit service form' for update data in 'services table'
+    connect(m_pEditServiceForm,
+            SIGNAL(updateServicesData()),
+            SLOT(updateServicesModel())
+           );
 }
 
 
@@ -91,13 +115,13 @@ void MainWindow::setModels()
 
 void MainWindow::updateSalesModel()
 {
-    ui->tableSales->setModel(DB::instance()->getAllSales());
+    ui->tableSales->setSalesModel();
     ui->tableSales->setColumnHidden(0, true);
 }
 
 void MainWindow::updateServicesModel()
 {
-    ui->tableServices->setModel(DB::instance()->getAllServices());
+    ui->tableServices->setServicesModel();
     ui->tableServices->setColumnHidden(0, true);
 }
 
@@ -147,7 +171,7 @@ void MainWindow::logOut()
 
 void MainWindow::logIn(QString userName)
 {
-    this->setWindowTitle("Accounting - " + userName);
+    this->setWindowTitle(userName);
     this->show();
     qDebug() << "userLogged!" + userName;
 }

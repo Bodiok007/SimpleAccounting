@@ -10,6 +10,7 @@ public:
     AddSale(QWidget *parent);
 
 signals:
+    void updateSalesData();
 
 public slots:
     void addSale();
@@ -25,9 +26,19 @@ private:
 
     QString m_employeeName;
 
+    QMap<QString, QString> *m_pSaleCategories;
+    QStringList getListCategories();
+
     void createLabels();
     void createFields();
     void createAddButton();
+    void clearFields();
+
+    void message(QString text);
+
+    bool addProduct();
+    uint getEmployeeID();
+    QString getCurrentData();
 };
 
 #endif // ADDSALE_H

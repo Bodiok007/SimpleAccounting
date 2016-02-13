@@ -2,6 +2,7 @@
 #define SERVICESTABLEVIEW_H
 
 #include <QtWidgets>
+#include "servicesmodel.h"
 
 class ServicesTableView : public QTableView
 {
@@ -15,6 +16,7 @@ signals:
 
 public slots:
     void slotActivatedContextMenu(QAction *pAction);
+    void setServicesModel();
 
 protected:
     virtual void contextMenuEvent(QContextMenuEvent *pe);
@@ -22,6 +24,7 @@ protected:
 
 private:
     QMenu *m_pContextMenu;
+    ServicesModel *m_pServicesModel;
 
     uint getCurrentServiceID();
 };

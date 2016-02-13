@@ -19,9 +19,23 @@ public slots:
     void addService();
     void setEmployeeName(QString employeeName);
 
+signals:
+    void updateServicesData();
+
 private:
     Ui::AddServiceForm *ui;
     QString m_employeeName;
+    QMap<QString, QString> *m_pServiceCategories;
+
+    void message(QString text);
+
+    void setCategories();
+    QStringList getListCategories();
+
+    uint getEmployeeID();
+    bool addCustomer(QString customerName,
+                     QString customerPhone);
+    QString getCurrentData();
 };
 
 #endif // ADDSERVICEFORM_H

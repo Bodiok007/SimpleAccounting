@@ -44,6 +44,9 @@ private:
     EditSalesForm *m_pEditSaleForm;
     EditServicesForm *m_pEditServiceForm;
 
+    void bindSignalsAndSlotsForSales();
+    void bindSignalsAndSlotsForServices();
+
 };
 
 #endif // MAINWINDOW_H

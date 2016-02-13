@@ -4,6 +4,7 @@ ServicesTableView::ServicesTableView(QWidget *parent)
     : QTableView(parent)
 {
     initializeContextMenu();
+    m_pServicesModel = new ServicesModel(this);
 }
 
 
@@ -41,6 +42,11 @@ void ServicesTableView::slotActivatedContextMenu(QAction *pAction)
         emit editService(getCurrentServiceID());
     }
 
+}
+
+void ServicesTableView::setServicesModel()
+{
+    setModel(m_pServicesModel->getModel());
 }
 
 uint ServicesTableView::getCurrentServiceID()

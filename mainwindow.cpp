@@ -1,22 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ui_addsaleform.h"
 #include "DB/db.h"
-#include "servicecategories.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_DeleteOnClose);
 
-    m_pAddSaleForm = new AddSale(0);
+    m_pAddSaleForm = new AddSale;
     m_pAddServiceForm = new AddServiceForm;
-
-    m_pLoginForm = new LoginForm;
-    m_pLoginForm->show();
-    connect(m_pLoginForm, SIGNAL(logged(QString)), SLOT(logIn(QString)) );
 
     m_pEditSaleForm = new EditSalesForm;
     m_pEditServiceForm = new EditServicesForm;
@@ -132,7 +126,6 @@ Ui::MainWindow *MainWindow::getForm()
 void MainWindow::exit()
 {
     this->hide();
-    m_pLoginForm->show();
 }
 
 
@@ -164,16 +157,13 @@ void MainWindow::showEditServiceForm()
 
 void MainWindow::logOut()
 {
-    this->hide();
-    m_pLoginForm->show();
+    emit logout();
 }
-
 
 void MainWindow::logIn(QString userName)
 {
     this->setWindowTitle(userName);
     this->show();
-    qDebug() << "userLogged!" + userName;
 }
 
 
@@ -184,7 +174,6 @@ MainWindow::~MainWindow()
     delete m_pAddServiceForm;
     delete m_pEditSaleForm;
     delete m_pEditServiceForm;
-    delete m_pLoginForm;
 }
 
 

@@ -50,13 +50,13 @@ void LoginForm::pressLoginButton()
     QString userName = "";
     if ((userName = DB::instance()->logIn(login, password)) == NULL) {
         message("Користувач не знайдений! "
-                "Перевірте, будь ласка, логін та пароль!");
+                "Перевірте, будь ласка, логін та пароль!" " ree" + DB::instance()->lastError().isValid());
         return;
     }
 
     emit logged(userName);
 
-    this->hide();
+    //this->hide();
     ui->linePassword->setText("");
 }
 

@@ -1,11 +1,12 @@
 #include "salestableview.h"
 
-SalesTableView::SalesTableView(QWidget *parent)
+SalesTableView::SalesTableView(QWidget *parent = 0)
     : QTableView(parent)
 {
     initializeContextMenu();
     setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_pSalesModel = new SalesModel;
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_pSalesModel = new SalesModel(this);
 }
 
 

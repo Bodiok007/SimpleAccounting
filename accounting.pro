@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     salesmodel.cpp \
     servicecategories.cpp \
     servicesmodel.cpp \
-    salecategories.cpp
+    salecategories.cpp \
+    mainapplication.cpp
 
 HEADERS  += mainwindow.h \
     DB/db.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     salesmodel.h \
     servicecategories.h \
     servicesmodel.h \
-    salecategories.h
+    salecategories.h \
+    mainapplication.h
 
 FORMS    += \
     mainwindow.ui \

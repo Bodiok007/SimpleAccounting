@@ -27,7 +27,9 @@ private:
     uint m_saleID;
     QMap<QString, QString> *m_pSaleCategories;
     QMap<QString, QString> m_saleTableData;
-
+	QDoubleValidator *m_pDoubleValidator;
+	QIntValidator *m_pIntValidator;
+	
     bool getSaleTableData(uint serviceID);
     void setSaleTableData();
     QMap<QString, QString> *getProductTableData(QString productID);

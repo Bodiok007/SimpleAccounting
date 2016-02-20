@@ -7,7 +7,8 @@ class AddSale : public QGroupBox
 {
     Q_OBJECT
 public:
-    AddSale(QWidget *parent);
+    AddSale(QWidget *parent = 0);
+	~AddSale();
 
 signals:
     void updateSalesData();
@@ -24,6 +25,10 @@ private:
     QPushButton *m_pAddSale;
     QGridLayout *m_pGridLayout;
 
+	QIcon *m_pIcon;
+
+	QIntValidator *m_pIntValidator;
+
     QString m_employeeName;
 
     QMap<QString, QString> *m_pSaleCategories;
@@ -36,6 +41,7 @@ private:
 
     void message(QString text);
 
+    bool emptyEnterFromUser();
     bool addProduct();
     uint getEmployeeID();
     QString getCurrentData();

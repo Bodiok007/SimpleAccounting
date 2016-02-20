@@ -1,7 +1,7 @@
 #ifndef ADDSERVICEFORM_H
 #define ADDSERVICEFORM_H
 
-#include <QWidget>
+#include <QtWidgets>
 
 namespace Ui {
 class AddServiceForm;
@@ -26,8 +26,11 @@ private:
     Ui::AddServiceForm *ui;
     QString m_employeeName;
     QMap<QString, QString> *m_pServiceCategories;
+	QDoubleValidator *m_pDoubleValidator;
 
     void message(QString text);
+
+    bool emptyEnterFromUser();
 
     void setCategories();
     QStringList getListCategories();

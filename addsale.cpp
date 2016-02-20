@@ -9,6 +9,8 @@ AddSale::AddSale(QWidget *parent)
 
     m_pGridLayout = new QGridLayout;
 
+	m_pIntValidator = new QIntValidator;
+
     createLabels();
     createFields();
     createAddButton();
@@ -17,7 +19,8 @@ AddSale::AddSale(QWidget *parent)
 
     setAttribute(Qt::WA_ShowModal);
     setWindowTitle("Додавання продажі");
-    setWindowIcon(*(new QIcon(":/logo.png")));
+
+	m_pIcon = new QIcon(":/logo.png");
 
     connect(m_pAddSale,
             SIGNAL(clicked(bool)),
@@ -49,9 +52,9 @@ void AddSale::createFields()
     m_pCategoryProduct = new QComboBox;
     m_pCategoryProduct->addItems(getListCategories());
     m_pCountProduct = new QLineEdit;
-    m_pCountProduct->setValidator(new QIntValidator);
+	m_pCountProduct->setValidator(m_pIntValidator);
     m_pPriceProduct = new QLineEdit;
-    m_pPriceProduct->setValidator(new QDoubleValidator);
+	m_pPriceProduct->setValidator(m_pIntValidator);
 
     m_pGridLayout->addWidget(m_pNameProduct, 1, 0);
     m_pGridLayout->addWidget(m_pCategoryProduct, 1, 1);
@@ -133,8 +136,26 @@ QString AddSale::getCurrentData()
 }
 
 
+bool AddSale::emptyEnterFromUser()
+{
+    if (m_pNameProduct->text() != ""
+          && m_pPriceProduct->text() != ""
+          && m_pCountProduct->text() != ""){
+
+        return false;
+    }
+
+    return true;
+}
+
+
 void AddSale::addSale()
 {
+    if (emptyEnterFromUser()) {
+        message("Заповніть, будь ласка, всі поля!");
+        return;
+    }
+
     if (!addProduct()) {
         return;
     }
@@ -200,3 +221,9 @@ QStringList AddSale::getListCategories()
     return categories;
 }
 
+
+AddSale::~AddSale()
+{
+	delete m_pIntValidator;
+	delete m_pIcon;
+}

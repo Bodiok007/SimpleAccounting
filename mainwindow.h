@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include "addsale.h"
 #include "addserviceform.h"
-#include "loginform.h"
 #include "editsalesform.h"
 #include "editservicesform.h"
 
@@ -36,9 +35,11 @@ public slots:
     void updateSalesModel();
     void updateServicesModel();
 
+signals:
+    void logout();
+
 private:
     Ui::MainWindow *ui;
-    LoginForm *m_pLoginForm;
     AddSale *m_pAddSaleForm;
     AddServiceForm *m_pAddServiceForm;
     EditSalesForm *m_pEditSaleForm;

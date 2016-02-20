@@ -3,12 +3,15 @@
 #include "DB/db.h"
 #include "servicecategories.h"
 
+
 AddServiceForm::AddServiceForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AddServiceForm)
 {
     ui->setupUi(this);
-    ui->lineServiceSum->setValidator(new QDoubleValidator);
+
+	m_pDoubleValidator = new QDoubleValidator;
+	ui->lineServiceSum->setValidator(m_pDoubleValidator);
 
     setAttribute(Qt::WA_ShowModal);
 
@@ -24,11 +27,28 @@ AddServiceForm::AddServiceForm(QWidget *parent) :
 AddServiceForm::~AddServiceForm()
 {
     delete ui;
+	delete m_pDoubleValidator;
+}
+
+
+bool AddServiceForm::emptyEnterFromUser()
+{
+    if (ui->lineCustomerName->text() != ""
+          && ui->lineCustomerPhone->text() != "") {
+
+        return false;
+    }
+
+    return true;
 }
 
 
 void AddServiceForm::addService()
 {
+    if (emptyEnterFromUser()) {
+        message("Заповніть, будь ласка, поля імені і телефону замовника!");
+        return;
+    }
     uint employeeID = getEmployeeID();
     if (employeeID == 0) {
         message("Помилка під час отримання даних про працівнака! "

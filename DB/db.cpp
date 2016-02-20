@@ -297,6 +297,7 @@ QSqlQuery *DB::getData() const
 DB::~DB()
 {
     delete m_pSettings;
+	delete m_pQuery;
 }
 
 //-----------------------------------------------------------------------------

@@ -12,7 +12,9 @@ EditServicesForm::EditServicesForm(QWidget *parent) :
     ui(new Ui::EditServicesForm)
 {
     ui->setupUi(this);
-    ui->lineSum->setValidator(new QDoubleValidator);
+
+	m_pDoubleValidator = new QDoubleValidator;
+	ui->lineSum->setValidator(m_pDoubleValidator);
 
     setAttribute(Qt::WA_ShowModal);
 
@@ -331,5 +333,6 @@ void EditServicesForm::addServiceCostToForm()
 EditServicesForm::~EditServicesForm()
 {
     delete ui;
+	delete m_pDoubleValidator;
 }
 

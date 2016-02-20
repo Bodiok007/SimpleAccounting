@@ -27,9 +27,11 @@ private:
     QMap<QString, QString> m_serviceTableData;
     uint m_serviceID;
     QMap<QString, QString> *m_pServiceCategories;
+	QDoubleValidator *m_pDoubleValidator;
 
     void message(QString text);
     void clearEditForm();
+
 
     bool getServiceTableData(uint serviceID);
     void setServiceTableData();

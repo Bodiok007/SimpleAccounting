@@ -12,8 +12,11 @@ EditSalesForm::EditSalesForm(QWidget *parent) :
     ui(new Ui::EditSalesForm)
 {
     ui->setupUi(this);
-    ui->lineProductCost->setValidator(new QDoubleValidator);
-    ui->lineProductCount->setValidator(new QIntValidator);
+
+	m_pDoubleValidator = new QDoubleValidator;
+	ui->lineProductCost->setValidator(m_pDoubleValidator);
+	m_pIntValidator = new QIntValidator;
+	ui->lineProductCount->setValidator(m_pIntValidator);
 
     setAttribute(Qt::WA_ShowModal);
 
@@ -28,6 +31,8 @@ EditSalesForm::EditSalesForm(QWidget *parent) :
 EditSalesForm::~EditSalesForm()
 {
     delete ui;
+	delete m_pDoubleValidator;
+	delete m_pIntValidator;
 }
 
 

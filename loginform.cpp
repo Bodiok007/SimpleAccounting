@@ -1,6 +1,6 @@
 #include "loginform.h"
 #include "ui_loginform.h"
-#include "db.h"
+#include "DB/db.h"
 
 LoginForm::LoginForm(QWidget *parent) :
     QWidget(parent),

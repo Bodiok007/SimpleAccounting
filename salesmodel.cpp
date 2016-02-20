@@ -1,5 +1,5 @@
 #include "salesmodel.h"
-#include "db.h"
+#include "DB/db.h"
 
 //------------------------------------------------------------------------------
 // CONSTRUCTOR

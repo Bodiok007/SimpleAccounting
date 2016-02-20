@@ -13,13 +13,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    db.cpp \
+    DB/db.cpp \
     salestableview.cpp \
     servicestableview.cpp \
     addsaleform.cpp \
     addsale.cpp \
     loginform.cpp \
-    dbsettings.cpp \
+    DB/dbsettings.cpp \
     addserviceform.cpp \
     editsalesform.cpp \
     editservicesform.cpp \
@@ -29,13 +29,13 @@ SOURCES += main.cpp\
     salecategories.cpp
 
 HEADERS  += mainwindow.h \
-    db.h \
+    DB/db.h \
     salestableview.h \
     servicestableview.h \
     addsaleform.h \
     addsale.h \
     loginform.h \
-    dbsettings.h \
+    DB/dbsettings.h \
     addserviceform.h \
     editsalesform.h \
     editservicesform.h \

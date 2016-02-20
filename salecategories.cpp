@@ -1,6 +1,6 @@
 #include "salecategories.h"
 #include <QtSql>
-#include "db.h"
+#include "DB/db.h"
 
 
 

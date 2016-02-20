@@ -1,5 +1,5 @@
 #include "addsale.h"
-#include "db.h"
+#include "DB/db.h"
 #include "salecategories.h"
 
 AddSale::AddSale(QWidget *parent)

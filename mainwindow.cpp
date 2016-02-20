@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ui_addsaleform.h"
-#include "db.h"
-#include "dbsettings.h"
+#include "DB/db.h"
 #include "servicecategories.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -64,8 +63,6 @@ void MainWindow::bindSignalsAndSlotsForSales()
             SIGNAL(updateSalesData()),
             SLOT(updateSalesModel())
            );
-
-
 }
 
 
@@ -145,16 +142,19 @@ void MainWindow::showAddSaleForm()
     m_pAddSaleForm->show();
 }
 
+
 void MainWindow::showAddServiceForm()
 {
     m_pAddServiceForm->setEmployeeName(windowTitle());
     m_pAddServiceForm->show();
 }
 
+
 void MainWindow::showEditSaleForm()
 {
     m_pEditSaleForm->show();
 }
+
 
 void MainWindow::showEditServiceForm()
 {

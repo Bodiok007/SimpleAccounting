@@ -1,6 +1,6 @@
 #include "addserviceform.h"
 #include "ui_addserviceform.h"
-#include "db.h"
+#include "DB/db.h"
 #include "servicecategories.h"
 
 AddServiceForm::AddServiceForm(QWidget *parent) :

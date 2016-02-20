@@ -1,6 +1,6 @@
 #include "editsalesform.h"
 #include "ui_editsalesform.h"
-#include "db.h"
+#include "DB/db.h"
 #include "salecategories.h"
 
 

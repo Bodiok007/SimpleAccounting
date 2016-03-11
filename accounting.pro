@@ -16,7 +16,6 @@ SOURCES += main.cpp\
     DB/db.cpp \
     salestableview.cpp \
     servicestableview.cpp \
-    addsaleform.cpp \
     addsale.cpp \
     loginform.cpp \
     DB/dbsettings.cpp \
@@ -33,7 +32,6 @@ HEADERS  += mainwindow.h \
     DB/db.h \
     salestableview.h \
     servicestableview.h \
-    addsaleform.h \
     addsale.h \
     loginform.h \
     DB/dbsettings.h \

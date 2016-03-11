@@ -60,15 +60,6 @@ void EditSalesForm::addDataToForm(uint saleID)
 
 void EditSalesForm::saveEditData()
 {
-    qDebug() << "edit button sale ok";
-    /*DB::instance()->saveEditSale(m_saleID,
-                                 ui->comboSaleCategory->currentText(),
-                                 m_generalData["productID"].toUInt(),
-                                 ui->lineProductName->text(),
-                                 ui->calendarSale->selectedDate().toString("dd.MM.yyyy"),
-                                 ui->lineProductCount->text().toInt(),
-                                 ui->lineProductCost->text().toDouble()
-                                );*/
     bool ok = updateProduct();
     if (!ok) {
         message("Неможливо змінити дані про продукт");

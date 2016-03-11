@@ -15,8 +15,6 @@ public:
     explicit AddSaleForm(QWidget *parent = 0);
     ~AddSaleForm();
 
-    void setEmployeeName(QString emloyeeName);
-
 public slots:
 
 private:

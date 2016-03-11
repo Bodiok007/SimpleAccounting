@@ -38,7 +38,7 @@ private:
     uint getEmployeeID();
     bool addCustomer(QString customerName,
                      QString customerPhone);
-    QString getCurrentData();
+    QString getCurrentDate();
 };
 
 #endif // ADDSERVICEFORM_H

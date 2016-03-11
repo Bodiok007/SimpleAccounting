@@ -76,7 +76,7 @@ void AddServiceForm::addService()
               << QString::number(employeeID)
               << customerID
               << ui->lineServiceDescription->toPlainText()
-              << getCurrentData()
+              << getCurrentDate()
               << ""
               << ui->lineServiceSum->text();
 
@@ -112,7 +112,7 @@ bool AddServiceForm::addCustomer(QString customerName,
 }
 
 
-QString AddServiceForm::getCurrentData()
+QString AddServiceForm::getCurrentDate()
 {
     QDate dateToday = QDate::currentDate();
     return dateToday.toString("dd.MM.yyyy");
